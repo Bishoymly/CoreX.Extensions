@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Bishoy Labib</Authors>
+    <Company>Bishoy Labib</Company>
+    <Version>0.0.3-prerelease</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>A suitable logging for microservices scenarios, where you need to track huge amounts of logs without sacrificing performance or storage. Setup HttpLogger in startup and enjoy a log that you can access from your browser and doesn't fill your storage nor blocks CPU. Integrates with Microsoft.Extensions.Logging</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>
