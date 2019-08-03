@@ -1,17 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace CoreX.Extensions.Logging
 {
     public class HttpLogger : ILogger
     {
-        private string name;
-        private LogMiddleware logMiddleware;
+        private string _name;
+        private LogMiddleware _logMiddleware;
 
-        public HttpLogger(string name, LogMiddleware logMiddleware)
+        protected IOptionsMonitor<HttpLoggerOptions> Options { get; set; }
+
+        public HttpLogger(string name, LogMiddleware logMiddleware, IOptionsMonitor<HttpLoggerOptions> options)
         {
-            this.logMiddleware = logMiddleware;
-            this.name = name;
+            _logMiddleware = logMiddleware;
+            _name = name;
+            Options = options;
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -26,40 +30,48 @@ namespace CoreX.Extensions.Logging
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            string div = "<div>";
-            if(logLevel == LogLevel.Error || logLevel == LogLevel.Critical)
+            if (Options.CurrentValue.Enabled)
             {
-                div = "<div style='color:red'>";
-            }
-
-            if (logLevel == LogLevel.Warning)
-            {
-                div = "<div style='color:yellow'>";
-            }
-
-            if (logLevel == LogLevel.Trace || logLevel == LogLevel.Debug)
-            {
-                div = "<div style='color:gray'>";
-            }
-
-            logMiddleware.LogMessage($"{div}{formatter(state, exception)}</div>");
-            if (exception != null)
-            {
-                // Clearly print the message for the exception
-                logMiddleware.LogMessage($"{div}{exception.Message.ToString().Replace("\r\n", "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;")}</div>");
-
-                // Slightly darker color for the stacktrace
+                var div = "<div>";
                 if (logLevel == LogLevel.Error || logLevel == LogLevel.Critical)
                 {
-                    div = "<div style='color:#A00'>";
+                    div = "<div style='color:red'>";
                 }
-                else
+
+                if (logLevel == LogLevel.Warning)
                 {
-                    div = "<div style='color:#AA0'>";
+                    div = "<div style='color:yellow'>";
                 }
-                
-                logMiddleware.LogMessage($"{div}{exception.ToString().Replace("\r\n","<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;")}</div>");
+
+                if (logLevel == LogLevel.Trace || logLevel == LogLevel.Debug)
+                {
+                    div = "<div style='color:gray'>";
+                }
+
+                _logMiddleware.LogMessage($"{div}{DateTime.Now.ToString(Options.CurrentValue.TimestampFormat) + ": "}{formatter(state, exception)}</div>");
+                if (exception != null)
+                {
+                    // Clearly print the message for the exception
+                    _logMiddleware.LogMessage($"{div}{ToHtml(exception.Message)}</div>");
+
+                    // Slightly darker color for the stacktrace
+                    if (logLevel == LogLevel.Error || logLevel == LogLevel.Critical)
+                    {
+                        div = "<div style='color:#A00'>";
+                    }
+                    else
+                    {
+                        div = "<div style='color:#AA0'>";
+                    }
+
+                    _logMiddleware.LogMessage($"{div}{ToHtml(exception.ToString())}</div>");
+                }
             }
+        }
+
+        protected string ToHtml(string body)
+        {
+            return body.Replace("\r\n", "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;");
         }
     }
 }

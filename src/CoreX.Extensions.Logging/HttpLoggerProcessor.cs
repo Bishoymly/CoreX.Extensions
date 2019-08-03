@@ -9,19 +9,18 @@ namespace CoreX.Extensions.Logging
         private const int _maxQueuedMessages = 1024;
 
         private readonly BlockingCollection<string> _messageQueue = new BlockingCollection<string>(_maxQueuedMessages);
-        private StreamWriter writer = null;
+        private StreamWriter _writer = null;
 
         public HttpLoggerProcessor(StreamWriter writer)
         {
-            this.writer = writer;
-
-            writer.AutoFlush = true;
-            writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
+            _writer = writer;
+            _writer.AutoFlush = true;
+            _writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
         }
 
         public virtual bool IsValid()
         {
-            return this.writer.BaseStream.CanWrite;
+            return _writer.BaseStream.CanWrite;
         }
 
         public virtual void EnqueueMessage(string message)
@@ -46,7 +45,7 @@ namespace CoreX.Extensions.Logging
 
         internal virtual void WriteMessage(string message)
         {
-            writer.WriteLine(message);
+            _writer.WriteLine(message);
         }
 
         public void ProcessLogQueue()

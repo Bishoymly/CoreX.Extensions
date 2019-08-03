@@ -1,13 +1,19 @@
 ﻿using CoreX.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class Extensions
     {
-        public static IServiceCollection AddHttpLog(this IServiceCollection services)
+        public static IServiceCollection AddHttpLog(this IServiceCollection services, IConfiguration config = null)
         {
+            if (config != null)
+            {
+                services.Configure<HttpLoggerOptions>(config.GetSection("HttpLogger"));
+            }
+
             services.Add(new ServiceDescriptor(typeof(LogMiddleware), typeof(LogMiddleware), ServiceLifetime.Singleton));
             return services;
         }
