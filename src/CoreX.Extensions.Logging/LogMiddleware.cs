@@ -38,9 +38,7 @@ namespace CoreX.Extensions.Logging
                             context.Response.ContentType = "text/html; charset=UTF-8";
                             context.RequestAborted.ThrowIfCancellationRequested();
 
-                            var writer = new StreamWriter(context.Response.Body);
-                            processor = new HttpLoggerProcessor(this, writer);
-                            processor.InitializeQuery(context.Request.Query);
+                            processor = new HttpLoggerProcessor(this, context);
                             _logProcessors.Add(processor);
 
                             // limit to max active listeners

@@ -7,13 +7,14 @@ namespace CoreX.Extensions.Logging
 {
     public readonly struct LogMessageEntry
     {
-        public LogMessageEntry(DateTime timeStamp, LogLevel logLevel, EventId eventId, Exception exception, string message)
+        public LogMessageEntry(DateTime timeStamp, LogLevel logLevel, EventId eventId, Exception exception, string message, string httpLoggerKey)
         {
             TimeStamp = timeStamp;
             LogLevel = logLevel;
             Message = message;
             EventId = eventId;
             Exception = exception;
+            HttpLoggerKey = httpLoggerKey;
         }
 
         public readonly DateTime TimeStamp;
@@ -21,5 +22,6 @@ namespace CoreX.Extensions.Logging
         public readonly string Message;
         public readonly EventId EventId;
         public readonly Exception Exception;
+        public readonly string HttpLoggerKey;
     }
 }

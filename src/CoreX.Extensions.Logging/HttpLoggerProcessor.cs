@@ -13,23 +13,43 @@ namespace CoreX.Extensions.Logging
         private readonly BlockingCollection<LogMessageEntry> _messageQueue = new BlockingCollection<LogMessageEntry>(_maxQueuedMessages);
         private StreamWriter _writer = null;
         private LogMiddleware _middleware;
+        private string _myHttpLoggerKey;
 
-        private LogLevel logLevel = LogLevel.Trace;
+        private LogLevel _logLevel = LogLevel.Trace;
+        private string _key;
 
-        public HttpLoggerProcessor(LogMiddleware middleware, StreamWriter writer)
+        public HttpLoggerProcessor(LogMiddleware middleware, HttpContext context)
         {
             _middleware = middleware;
-            _writer = writer;
+
+            // HttpLogger Key Cookie
+            if(context.Request.Cookies.ContainsKey("HttpLogger"))
+            {
+                _myHttpLoggerKey = context.Request.Cookies["HttpLogger"];
+            }
+            else
+            {
+                _myHttpLoggerKey = Guid.NewGuid().ToString();
+                context.Response.Cookies.Append("HttpLogger", _myHttpLoggerKey);
+            }
+
+            // Start writer
+            _writer = new StreamWriter(context.Response.Body);
             _writer.AutoFlush = true;
             _writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
+
+            InitializeQuery(context.Request.Query);
         }
 
         public virtual bool AcceptsMessage(LogMessageEntry message)
         {
-            if (message.LogLevel >= logLevel)
-                return true;
-            else
+            if (message.LogLevel < _logLevel)
                 return false;
+
+            if (!string.IsNullOrEmpty(_key) && message.HttpLoggerKey != _key)
+                return false;
+
+            return true;
         }
 
         public virtual void EnqueueMessage(LogMessageEntry message)
@@ -56,7 +76,24 @@ namespace CoreX.Extensions.Logging
         {
             if(query.ContainsKey("level"))
             {
-                logLevel = ToLogLevel(query["level"]);
+                _logLevel = ToLogLevel(query["level"]);
+            }
+
+            if (query.ContainsKey("my"))
+            {
+                _key = _myHttpLoggerKey;
+            }
+
+            if (query.ContainsKey("key"))
+            {
+                if (query["key"].ToString().ToLower() == "my")
+                {
+                    _key = _myHttpLoggerKey;
+                }
+                else
+                {
+                    _key = query["level"];
+                }
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 
@@ -8,13 +9,15 @@ namespace CoreX.Extensions.Logging
     {
         private string _name;
         private LogMiddleware _logMiddleware;
+        private IHttpContextAccessor _contextAccessor;
 
         protected IOptionsMonitor<HttpLoggerOptions> Options { get; set; }
 
-        public HttpLogger(string name, LogMiddleware logMiddleware, IOptionsMonitor<HttpLoggerOptions> options)
+        public HttpLogger(string name, LogMiddleware logMiddleware, IOptionsMonitor<HttpLoggerOptions> options, IHttpContextAccessor contextAccessor)
         {
             _logMiddleware = logMiddleware;
             _name = name;
+            _contextAccessor = contextAccessor;
             Options = options;
         }
 
@@ -32,7 +35,18 @@ namespace CoreX.Extensions.Logging
         {
             if (Options.CurrentValue.Enabled)
             {
-                _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception)));
+                string key = null;
+                if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
+                {
+                    key = _contextAccessor.HttpContext.Request.Cookies["HttpLogger"];
+                }
+
+                if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("HttpLogger"))
+                {
+                    key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
+                }
+
+                _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), key));
             }
         }
     }

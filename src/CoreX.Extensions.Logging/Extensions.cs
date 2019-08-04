@@ -1,5 +1,6 @@
 ﻿using CoreX.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,10 +22,11 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IApplicationBuilder UseHttpLog(this IApplicationBuilder app)
         {
             var loggerFactory = app.ApplicationServices.GetService<ILoggerFactory>();
+            var contextAccessor = app.ApplicationServices.GetService<IHttpContextAccessor>();
             var logMiddleware = app.ApplicationServices.GetService<LogMiddleware>();
 
             app.UseMiddleware<LogMiddleware>();
-            loggerFactory.AddProvider(new HttpLoggerProvider(logMiddleware));
+            loggerFactory.AddProvider(new HttpLoggerProvider(logMiddleware, contextAccessor));
             return app;
         }
     }
