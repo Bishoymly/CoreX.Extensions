@@ -1,7 +1,7 @@
 # CoreX.Extensions.Logging
 A suitable logging for microservices scenarios, where you need to track logs without sacrificing performance or storage. 
 
-# Getting started
+## Getting started
 In startup.cs:
 ```
 // ConfigureServices
@@ -14,7 +14,7 @@ app.UseMvc();
 
 Then browse your app /log to view a realtime console view of your application!
 
-## Configurations 
+### Configurations 
 In appsettings.json put the following section to be able to configure the middleware:
 ```
   "HttpLogger": {
@@ -25,3 +25,17 @@ In appsettings.json put the following section to be able to configure the middle
     "AllowForRole": ""
   },
 ```
+
+## /log query options
+Browsing the /log url allows you to display filtered logs by certain parameters. Like the following examples:
+
+Display only warnings
+```
+/log?level=warning
+```
+
+Display only my logs: uses cookies to display logs coming only from my browser
+```
+/log?my
+```
+
