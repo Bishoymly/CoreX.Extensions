@@ -5,25 +5,23 @@ A suitable logging for microservices scenarios, where you need to track logs wit
 In startup.cs:
 ```
 // ConfigureServices
-services.AddHttpLog();
+services.AddHttpLog(Configuration);
 
-// Configure
-app.UseHttpLog();
+// Configure, right before UseMVC
+**app.UseHttpLog();**
+app.UseMvc();
 ```
 
 Then browse your app /log to view a realtime console view of your application!
 
-## Optionally to edit configurations: 
-In startup.cs:
+## Configurations 
+In appsettings.json put the following section to be able to configure the middleware:
 ```
-// ConfigureServices
-services.AddHttpLog(Configuration);
-```
-
-Then in appsettings.json:
-```
-"HttpLogger": {
+  "HttpLogger": {
     "Enabled": true,
-    "TimestampFormat": "hh:mm:ss.fff"
+    "TimestampFormat": "hh:mm:ss.fff",
+    "AllowForAnonymous": true,
+    "AllowForUser": "",
+    "AllowForRole": ""
   },
 ```

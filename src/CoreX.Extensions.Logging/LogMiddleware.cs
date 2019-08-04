@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
@@ -28,36 +29,61 @@ namespace CoreX.Extensions.Logging
             {
                 if (context.Request.Path == "/log" && context.Request.Method == "GET")
                 {
-                    HttpLoggerProcessor processor = null;
-                    try
+                    if (CheckAllowedFor(context))
                     {
-                        context.Response.StatusCode = 200;
-                        context.Response.ContentType = "text/html; charset=UTF-8";
-                        context.RequestAborted.ThrowIfCancellationRequested();
-
-                        var writer = new StreamWriter(context.Response.Body);
-                        processor = new HttpLoggerProcessor(writer);
-                        _logProcessors.Add(processor);
-
-                        // limit to max active listeners
-                        if (_logProcessors.Count > MaxActiveListeners)
+                        HttpLoggerProcessor processor = null;
+                        try
                         {
-                            _logProcessors.RemoveAt(0);
+                            context.Response.StatusCode = 200;
+                            context.Response.ContentType = "text/html; charset=UTF-8";
+                            context.RequestAborted.ThrowIfCancellationRequested();
+
+                            var writer = new StreamWriter(context.Response.Body);
+                            processor = new HttpLoggerProcessor(writer);
+                            _logProcessors.Add(processor);
+
+                            // limit to max active listeners
+                            if (_logProcessors.Count > MaxActiveListeners)
+                            {
+                                _logProcessors.RemoveAt(0);
+                            }
+
+                            processor.ProcessLogQueue();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            if (processor != null)
+                            {
+                                _logProcessors.Remove(processor);
+                            }
                         }
 
-                        processor.ProcessLogQueue();
                     }
-                    catch (OperationCanceledException)
+                    else
                     {
-                        if (processor != null)
-                        {
-                            _logProcessors.Remove(processor);
-                        }
+                        throw new UnauthorizedAccessException("You are not authorized to access logs..");
                     }
                 }
             }
 
             await next(context);
+        }
+
+        private bool CheckAllowedFor(HttpContext context)
+        {
+            // Anonymous
+            if (!_options.CurrentValue.AllowForAnonymous && !context.User.Identity.IsAuthenticated)
+                return false;
+
+            // User
+            if (!string.IsNullOrWhiteSpace(_options.CurrentValue.AllowForUser) && context.User.Identity.Name != _options.CurrentValue.AllowForUser)
+                return false;
+
+            // Role
+            if (!string.IsNullOrWhiteSpace(_options.CurrentValue.AllowForRole) && !context.User.IsInRole(_options.CurrentValue.AllowForRole))
+                return false;
+
+            return true;
         }
 
         public void LogMessage(string message)
