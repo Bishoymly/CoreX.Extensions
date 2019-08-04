@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Bishoy Labib</Authors>
     <Company>Bishoy Labib</Company>
-    <Version>0.0.8-prerelease</Version>
+    <Version>0.0.11-prerelease</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>A suitable logging for microservices scenarios, where you need to track huge amounts of logs without sacrificing performance or storage. Setup HttpLogger in startup and enjoy a log that you can access from your browser and doesn't fill your storage nor blocks CPU. Integrates with Microsoft.Extensions.Logging</Description>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions.Logging</RepositoryUrl>

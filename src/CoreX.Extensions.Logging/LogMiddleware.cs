@@ -39,7 +39,8 @@ namespace CoreX.Extensions.Logging
                             context.RequestAborted.ThrowIfCancellationRequested();
 
                             var writer = new StreamWriter(context.Response.Body);
-                            processor = new HttpLoggerProcessor(writer);
+                            processor = new HttpLoggerProcessor(this, writer);
+                            processor.InitializeQuery(context.Request.Query);
                             _logProcessors.Add(processor);
 
                             // limit to max active listeners
@@ -86,18 +87,13 @@ namespace CoreX.Extensions.Logging
             return true;
         }
 
-        public void LogMessage(string message)
+        public void LogMessage(LogMessageEntry message)
         {
             for (int i = 0; i < _logProcessors.Count; i++)
             {
-                if(_logProcessors[i].IsValid())
+                if(_logProcessors[i].AcceptsMessage(message))
                 {
                     _logProcessors[i].EnqueueMessage(message);
-                }
-                else
-                {
-                    _logProcessors.RemoveAt(i);
-                    i--;
                 }
             }
         }

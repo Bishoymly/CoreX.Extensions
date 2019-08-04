@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 
@@ -8,22 +10,29 @@ namespace CoreX.Extensions.Logging
     {
         private const int _maxQueuedMessages = 1024;
 
-        private readonly BlockingCollection<string> _messageQueue = new BlockingCollection<string>(_maxQueuedMessages);
+        private readonly BlockingCollection<LogMessageEntry> _messageQueue = new BlockingCollection<LogMessageEntry>(_maxQueuedMessages);
         private StreamWriter _writer = null;
+        private LogMiddleware _middleware;
 
-        public HttpLoggerProcessor(StreamWriter writer)
+        private LogLevel logLevel = LogLevel.Trace;
+
+        public HttpLoggerProcessor(LogMiddleware middleware, StreamWriter writer)
         {
+            _middleware = middleware;
             _writer = writer;
             _writer.AutoFlush = true;
             _writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
         }
 
-        public virtual bool IsValid()
+        public virtual bool AcceptsMessage(LogMessageEntry message)
         {
-            return _writer.BaseStream.CanWrite;
+            if (message.LogLevel >= logLevel)
+                return true;
+            else
+                return false;
         }
 
-        public virtual void EnqueueMessage(string message)
+        public virtual void EnqueueMessage(LogMessageEntry message)
         {
             if (!_messageQueue.IsAddingCompleted)
             {
@@ -43,9 +52,101 @@ namespace CoreX.Extensions.Logging
             catch (Exception) { }
         }
 
-        internal virtual void WriteMessage(string message)
+        internal void InitializeQuery(IQueryCollection query)
         {
-            _writer.WriteLine(message);
+            if(query.ContainsKey("level"))
+            {
+                logLevel = ToLogLevel(query["level"]);
+            }
+        }
+
+        internal LogLevel ToLogLevel(string level)
+        {
+            switch (level.ToLower())
+            {
+                case "information":
+                case "info":
+                    return LogLevel.Information;
+
+                case "warning":
+                case "warn":
+                    return LogLevel.Warning;
+
+                case "error":
+                case "err":
+                    return LogLevel.Error;
+
+                case "critical":
+                case "fatal":
+                    return LogLevel.Critical;
+
+                case "debug":
+                case "dbg":
+                    return LogLevel.Debug;
+
+                case "trace":
+                case "verbose":
+                case "verb":
+                case "trc":
+                case "all":
+                case "any":
+                    return LogLevel.Trace;
+
+                case "none":
+                    return LogLevel.None;
+
+                default:
+                    return LogLevel.Trace;
+            }
+        }
+
+        internal virtual void WriteMessage(LogMessageEntry message)
+        {
+            _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{message.Message}</div>");
+            if (message.Exception != null)
+            {
+                _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
+                _writer.WriteLine($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
+            }
+        }
+
+        protected string ToColor(LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Trace:
+                case LogLevel.Debug:
+                    return "gray";
+                case LogLevel.Warning:
+                    return "yellow";
+                case LogLevel.Error:
+                case LogLevel.Critical:
+                    return "red";
+                case LogLevel.Information:
+                case LogLevel.None:
+                default:
+                    return "#fff";
+            }
+        }
+
+        protected string ToStackTraceColor(LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Warning:
+                    return "#AA0";
+                case LogLevel.Error:
+                case LogLevel.Critical:
+                case LogLevel.Information:
+                case LogLevel.None:
+                default:
+                    return "#A00";
+            }
+        }
+
+        protected string ToHtml(string body)
+        {
+            return body.Replace("\r\n", "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;");
         }
 
         public void ProcessLogQueue()
