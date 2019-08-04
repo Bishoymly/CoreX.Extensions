@@ -8,7 +8,7 @@ In startup.cs:
 services.AddHttpLog(Configuration);
 
 // Configure, right before UseMVC
-**app.UseHttpLog();**
+app.UseHttpLog();
 app.UseMvc();
 ```
 
