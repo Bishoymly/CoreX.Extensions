@@ -139,7 +139,7 @@ namespace CoreX.Extensions.Logging
 
         internal virtual void WriteMessage(LogMessageEntry message)
         {
-            _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{message.Message}</div>");
+            _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
             if (message.Exception != null)
             {
                 _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");

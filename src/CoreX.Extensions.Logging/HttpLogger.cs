@@ -36,14 +36,17 @@ namespace CoreX.Extensions.Logging
             if (Options.CurrentValue.Enabled)
             {
                 string key = null;
-                if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
+                if (_contextAccessor != null)
                 {
-                    key = _contextAccessor.HttpContext.Request.Cookies["HttpLogger"];
-                }
+                    if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
+                    {
+                        key = _contextAccessor.HttpContext.Request.Cookies["HttpLogger"];
+                    }
 
-                if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("HttpLogger"))
-                {
-                    key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
+                    if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("HttpLogger"))
+                    {
+                        key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
+                    }
                 }
 
                 _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), key));

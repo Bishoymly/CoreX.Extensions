@@ -1,12 +1,14 @@
 ﻿using CoreX.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class Extensions
+    public static class DIExtensions
     {
         public static IServiceCollection AddHttpLog(this IServiceCollection services, IConfiguration config = null)
         {

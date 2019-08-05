@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreX.Extensions.Logging", "CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj", "{1CC5C74B-128D-46A4-ACEE-95F43A57C92C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreX.Extensions.Logging", "CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj", "{1CC5C74B-128D-46A4-ACEE-95F43A57C92C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreX.Extensions.Http", "CoreX.Extensions.Http\CoreX.Extensions.Http.csproj", "{4C216B96-1C80-4898-9E14-D5F6E0E66889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1CC5C74B-128D-46A4-ACEE-95F43A57C92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CC5C74B-128D-46A4-ACEE-95F43A57C92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CC5C74B-128D-46A4-ACEE-95F43A57C92C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C216B96-1C80-4898-9E14-D5F6E0E66889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C216B96-1C80-4898-9E14-D5F6E0E66889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C216B96-1C80-4898-9E14-D5F6E0E66889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C216B96-1C80-4898-9E14-D5F6E0E66889}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
