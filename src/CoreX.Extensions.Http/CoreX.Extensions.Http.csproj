@@ -6,8 +6,8 @@
     <Version>0.1.0-prerelease</Version>
     <Authors>Bishoy Labib</Authors>
     <Description>Extensions that enhance HttpClient and Http Logging</Description>
-    <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions.Logging</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions.Logging</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Extensions.Http</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
