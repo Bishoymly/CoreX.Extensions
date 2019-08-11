@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +38,12 @@ namespace MicroserviceTemplate
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "MicroserviceTemplate",
-                    Version = "v1"
+                    Version = "v1",
+                    Description = "<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>" +
+                    "<ul>" +
+                    "<li><a target='_blank' href='/log?level=all'>/log</a> monitor your beautiful logs from the comfort of your browser </li>" +
+                    "<li><a target='_blank' href='/health'>/health</a> monitor your application health status </li>" +
+                    "</ul>"
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
@@ -45,11 +51,39 @@ namespace MicroserviceTemplate
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            // Enable the logging for common 400 bad request errors, for easier traceability
+            services.EnableLoggingForBadRequests();
+
+            // Register HttpClientFactory
+            services.AddHttpClient();
+
+            // Register HttpLog middleware for "/log"
+            services.AddHttpLog(Configuration);
+
+            // Register Health checks
+            services.AddHealthChecks();
+
+            // Configure ForwardedHeaders
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.All;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Enables ForwardedHeaders to enable hosting behind reverse proxies like NGINX or inside Kubernetes
+            app.UseForwardedHeaders();
+
+            // Enable HttpLog middleware for "/log"
+            app.UseHttpLog();
+
+            // Enable middleware for "/health"
+            app.UseHealthChecks("/health");
+
+            // Enable developer exception page for debugging
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

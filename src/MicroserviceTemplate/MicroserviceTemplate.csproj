@@ -14,6 +14,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CoreX.Extensions.Http\CoreX.Extensions.Http.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
