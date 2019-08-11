@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace MicroserviceTemplate
 {
     public class Startup
