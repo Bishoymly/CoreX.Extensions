@@ -1,0 +1,5 @@
+﻿# CoreX.Entensions.Http
+Common Http extensions for ASP.NET Core that provide the following features:
+* services.**EnableLoggingForBadRequests**(); when a client request your API with wrong message, the default dotnet behaviour is not to log any warnings or errors and just write a simple output 400 to the log, which gives no hint about the cause of the error nor what the user sent. This extension method fixes this by logging a warning with the validation errors and the full request to enable better debugging of such issues.
+* HttpRequest.**ToStringContent**(); extension method to log a full string representing the content of an HttpRequest. Suitable for logging to text files or consoles.
+* HttpRequest.**ToHtml**(); extension method to log a full html representing the content of an HttpRequest. Suitable for debugging viewing in browser.

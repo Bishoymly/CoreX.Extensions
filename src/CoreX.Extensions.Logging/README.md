@@ -14,7 +14,7 @@ app.UseMvc();
 
 Then browse your app /log to view a realtime console view of your application!
 
-### Configurations 
+## Configurations 
 In appsettings.json put the following section to be able to configure the middleware:
 ```
   "HttpLogger": {
@@ -39,3 +39,18 @@ Display only my logs: uses cookies to display logs coming only from my browser
 /log?my
 ```
 
+
+## Getting logs from multiple sources
+Having a web application calling other APIs, sometimes you need to see logs from all sequentially in one location. If you have multiple applications running with enabled /log extension, you can make one of them fetch the logs from the others by adding named remotes in appsettings.
+
+```
+  "HttpLogger": {
+
+    "Remotes": [
+      {
+        "name": "API",
+        "url": "https://localhost:44371/log"
+      }
+    ]
+  },
+```
