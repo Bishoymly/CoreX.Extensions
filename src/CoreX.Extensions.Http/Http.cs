@@ -11,7 +11,7 @@ namespace CoreX.Extensions.Http
             this.client = httpClient;
         }
 
-        public string Get(string name, string url)
+        public string Get(string url)
         {
             var result = client.GetAsync(url).Result;
             result.EnsureSuccessStatusCode();
@@ -19,7 +19,7 @@ namespace CoreX.Extensions.Http
             return result.Content.ReadAsStringAsync().Result;
         }
 
-        public T Get<T>(string name, string url)
+        public T Get<T>(string url)
         {
             var result = client.GetAsync(url).Result;
             result.EnsureSuccessStatusCode();

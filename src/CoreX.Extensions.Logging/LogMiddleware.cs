@@ -47,6 +47,7 @@ namespace CoreX.Extensions.Logging
                                 _logProcessors.RemoveAt(0);
                             }
 
+                            processor.InitializeRemotes();
                             processor.ProcessLogQueue();
                         }
                         catch (OperationCanceledException)
@@ -56,7 +57,6 @@ namespace CoreX.Extensions.Logging
                                 _logProcessors.Remove(processor);
                             }
                         }
-
                     }
                     else
                     {

@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
 
 namespace CoreX.Extensions.Logging
 {
@@ -17,6 +20,7 @@ namespace CoreX.Extensions.Logging
 
         private LogLevel _logLevel = LogLevel.Trace;
         private string _key;
+        private string _query;
 
         public HttpLoggerProcessor(LogMiddleware middleware, HttpContext context)
         {
@@ -39,6 +43,38 @@ namespace CoreX.Extensions.Logging
             _writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
 
             InitializeQuery(context.Request.Query);
+        }
+
+        public void InitializeRemotes()
+        {
+            foreach (var remote in _middleware._options.CurrentValue.Remotes)
+            {
+                var thread = new Thread(new ParameterizedThreadStart(RemoteLog));
+                thread.Start(remote);
+            }
+        }
+
+        private void RemoteLog(object obj)
+        {
+            var remote = obj as Remote;
+            using (var client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                var request = new HttpRequestMessage(HttpMethod.Get, remote.Url + _query);
+                using (var response = client.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead).Result)
+                {
+                    using (var body = response.Content.ReadAsStreamAsync().Result)
+                    using (var reader = new StreamReader(body))
+                        while (!reader.EndOfStream)
+                        {
+                            var message = new LogMessageEntry(DateTime.Now, LogLevel.Debug, new EventId(0), null, reader.ReadLine(), null, remote.Name);
+                            this.EnqueueMessage(message);
+                        }
+                }
+            }
         }
 
         public virtual bool AcceptsMessage(LogMessageEntry message)
@@ -74,9 +110,11 @@ namespace CoreX.Extensions.Logging
 
         internal void InitializeQuery(IQueryCollection query)
         {
-            if(query.ContainsKey("level"))
+            StringBuilder q = new StringBuilder("?");
+            if (query.ContainsKey("level"))
             {
                 _logLevel = ToLogLevel(query["level"]);
+                q.Append("level=" + query["level"]);
             }
 
             if (query.ContainsKey("my"))
@@ -92,9 +130,14 @@ namespace CoreX.Extensions.Logging
                 }
                 else
                 {
-                    _key = query["level"];
+                    _key = query["key"];
                 }
             }
+
+            if(!string.IsNullOrEmpty(_key))
+                q.Append("key=" + query["key"]);
+
+            _query = q.ToString();
         }
 
         internal LogLevel ToLogLevel(string level)
@@ -139,11 +182,26 @@ namespace CoreX.Extensions.Logging
 
         internal virtual void WriteMessage(LogMessageEntry message)
         {
-            _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
-            if (message.Exception != null)
+            if (message.Remote == null)
             {
-                _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
-                _writer.WriteLine($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
+                _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
+                if (message.Exception != null)
+                {
+                    _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
+                    _writer.WriteLine($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
+                }
+            }
+            else
+            {
+                // Insert remote name inside message
+                var msg = message.Message;
+                int i = msg.IndexOf('>');
+                i = msg.IndexOf(' ', i);
+                if (i >= 0)
+                {
+                    msg = msg.Insert(i + 1, message.Remote + ": ");
+                }
+                _writer.WriteLine(msg);
             }
         }
 

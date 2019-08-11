@@ -11,5 +11,12 @@ namespace CoreX.Extensions.Logging
         public bool AllowForAnonymous { get; set; } = true;
         public string AllowForUser { get; set; }
         public string AllowForRole { get; set; }
+        public List<Remote> Remotes { get; set; } = new List<Remote>();
+    }
+
+    public class Remote
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }
