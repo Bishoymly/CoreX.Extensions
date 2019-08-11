@@ -8,15 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CoreX.Extensions.Http" Version="0.1.0-prerelease" />
+    <PackageReference Include="CoreX.Extensions.Logging" Version="0.1.0-prerelease" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CoreX.Extensions.Http\CoreX.Extensions.Http.csproj" />
-    <ProjectReference Include="..\CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

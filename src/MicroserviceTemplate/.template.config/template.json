@@ -1,0 +1,13 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Bishoy Labib",
+    "classifications": [ "Web", "WebAPI", "Console", "Microservices" ],
+    "identity": "CoreX.Extensions.MicroserviceTemplate",
+    "name": "ASP.NET Core Web API optimized for Microservices",
+    "shortName": "microservice",
+    "sourceName": "MicroserviceTemplate",
+    "preferNameDirectory" : "true",
+    "tags": {
+      "language": "C#"
+    }
+  }
