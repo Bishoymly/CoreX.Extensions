@@ -3,16 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using CoreX.Extensions.Metrics;
+using HealthChecks.UI.Client;
+using MicroserviceTemplate.Data;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
@@ -26,25 +33,24 @@ namespace MicroserviceTemplate
         }
 
         public IConfiguration Configuration { get; }
+        public OpenApiInfo OpenApiInfo { get; set; } = new OpenApiInfo
+        {
+            Title = "MicroserviceTemplate",
+            Version = "v1"
+        };
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            // Register Feature Management
+            services.AddFeatureManagement();
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "MicroserviceTemplate",
-                    Version = "v1",
-                    Description = "<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>" +
-                    "<ul>" +
-                    "<li><a target='_blank' href='/log?level=all'>/log</a> monitor your beautiful logs from the comfort of your browser </li>" +
-                    "<li><a target='_blank' href='/health'>/health</a> monitor your application health status </li>" +
-                    "</ul>"
-                });
+                c.SwaggerDoc("v1", OpenApiInfo);
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -62,7 +68,17 @@ namespace MicroserviceTemplate
             services.AddHttpLog(Configuration);
 
             // Register Health checks
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], name: "DefaultConnection");
+
+            services.AddHealthChecksUI();
+
+            // Register the DbContext
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(
+                    Configuration["ConnectionStrings:DefaultConnection"]);
+            });
 
             // Configure ForwardedHeaders
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -72,16 +88,37 @@ namespace MicroserviceTemplate
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IFeatureManager featureManager)
         {
-            // Enables ForwardedHeaders to enable hosting behind reverse proxies like NGINX or inside Kubernetes
-            app.UseForwardedHeaders();
+            // Set Swagger description to match enabled features
+            OpenApiInfo.Description = GetSwaggerHomepage(featureManager);
 
-            // Enable HttpLog middleware for "/log"
-            app.UseHttpLog();
+            if (featureManager.IsEnabled(Features.ForwardedHeaders))
+            {
+                // Enables ForwardedHeaders to enable hosting behind reverse proxies like NGINX or inside Kubernetes
+                app.UseForwardedHeaders();
+            }
 
-            // Enable middleware for "/health"
-            app.UseHealthChecks("/health");
+            if (featureManager.IsEnabled(Features.HttpLogger))
+            {
+                // Enable HttpLog middleware for "/log"
+                app.UseHttpLog();
+            }
+
+            if (featureManager.IsEnabled(Features.Healthz))
+            {
+                // Enable middleware for "/healthz"
+                app.UseHealthChecks("/healthz", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+            }
+
+            if (featureManager.IsEnabled(Features.HealthUI))
+            {
+                app.UseHealthChecksUI();
+            }
 
             // Enable developer exception page for debugging
             if (env.IsDevelopment())
@@ -96,18 +133,40 @@ namespace MicroserviceTemplate
 
             app.UseHttpsRedirection();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
+            if (featureManager.IsEnabled(Features.Swagger))
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "MicroserviceTemplate V1");
-                c.RoutePrefix = string.Empty;
-            });
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+                app.UseSwagger();
+
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+                // specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MicroserviceTemplate V1");
+                    c.RoutePrefix = string.Empty;
+                });
+            }
 
             app.UseMvc();
+        }
+
+        // This method is used to generate the description in the swagger UI page, according to the available features
+        public string GetSwaggerHomepage(IFeatureManager featureManager)
+        {
+            var description = new StringBuilder();
+            if (featureManager.IsEnabled(Features.Metrics))
+                description.Append(HomeGenerator.BasicHtml());
+            description.Append("<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>");
+            description.Append("<ul>");
+            if (featureManager.IsEnabled(Features.HttpLogger))
+                description.Append("<li><a target='_blank' href='/log?level=all'>/log</a> monitor your beautiful logs from the comfort of your browser </li>");
+            if (featureManager.IsEnabled(Features.Healthz))
+                description.Append("<li><a target='_blank' href='/healthz'>/healthz</a> url to monitor your application health status </li>");
+            if (featureManager.IsEnabled(Features.HealthUI))
+                description.Append("<li><a target='_blank' href='/healthchecks-ui'>/healthchecks-ui</a> UI to monitor your application health status </li>");
+            description.Append("</ul>");
+
+            return description.ToString();
         }
     }
 }
