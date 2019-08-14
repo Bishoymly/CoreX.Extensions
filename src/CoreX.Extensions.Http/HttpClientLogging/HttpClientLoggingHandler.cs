@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,10 +12,10 @@ namespace CoreX.Extensions.Http.HttpClientLogging
 {
     public class HttpClientLoggingHandler : DelegatingHandler
     {
-        private readonly HttpClientLoggingOptions _options;
+        private readonly IOptionsMonitor<HttpClientLoggingOptions> _options;
         private readonly ILoggerFactory _loggerFactory;
 
-        public HttpClientLoggingHandler(HttpClientLoggingOptions options, ILoggerFactory loggerFactory)
+        public HttpClientLoggingHandler(IOptionsMonitor<HttpClientLoggingOptions> options, ILoggerFactory loggerFactory)
         {
             _options = options;
             _loggerFactory = loggerFactory;
@@ -24,16 +25,16 @@ namespace CoreX.Extensions.Http.HttpClientLogging
         {
             var logger = _loggerFactory.CreateLogger<HttpClient>();
 
-            if (_options.Enabled)
+            if (_options.CurrentValue.Enabled)
             {
-                logger.LogInformation(request.ToStringContent(_options.Headers, _options.Body, _options.Html));
+                logger.LogInformation(request.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body, _options.CurrentValue.Html));
             }
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
-            if (_options.Enabled)
+            if (_options.CurrentValue.Enabled)
             {
-                logger.LogInformation(response.ToStringContent(_options.Headers, _options.Body, _options.Html));
+                logger.LogInformation(response.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body, _options.CurrentValue.Html));
             }
 
             return response;

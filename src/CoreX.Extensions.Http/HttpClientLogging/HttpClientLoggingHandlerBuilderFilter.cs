@@ -10,12 +10,12 @@ namespace CoreX.Extensions.Http.HttpClientLogging
 {
     internal class HttpClientLoggingHandlerBuilderFilter : IHttpMessageHandlerBuilderFilter
     {
-        private readonly HttpClientLoggingOptions _options;
+        private readonly IOptionsMonitor<HttpClientLoggingOptions> _options;
         private readonly ILoggerFactory _loggerFactory;
 
-        public HttpClientLoggingHandlerBuilderFilter(IOptions<HttpClientLoggingOptions> options, ILoggerFactory loggerFactory)
+        public HttpClientLoggingHandlerBuilderFilter(IOptionsMonitor<HttpClientLoggingOptions> options, ILoggerFactory loggerFactory)
         {
-            _options = options.Value;
+            _options = options;
             _loggerFactory = loggerFactory;
         }
 

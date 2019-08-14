@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CorrelationId;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace CoreX.Extensions.Http.HeaderPropagation
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
         {
-            if (_contextAccessor.HttpContext != null)
+            if (_contextAccessor != null && _contextAccessor.HttpContext != null)
             {
                 // REVIEW: This logic likely gets more fancy and allows mapping headers in more complex ways
                 foreach (var headerName in _options.HeaderNames)
@@ -30,6 +31,16 @@ namespace CoreX.Extensions.Http.HeaderPropagation
                     }
 
                     request.Headers.TryAddWithoutValidation(headerName, (string[])headerValue);
+                }
+
+                // Add correlation header if present
+                var accessor = _contextAccessor.HttpContext.RequestServices.GetService(typeof(ICorrelationContextAccessor)) as ICorrelationContextAccessor;
+                if (accessor != null && accessor.CorrelationContext != null)
+                {
+                    if (!request.Headers.Contains(accessor.CorrelationContext.Header))
+                    {
+                        request.Headers.TryAddWithoutValidation(accessor.CorrelationContext.Header, accessor.CorrelationContext.CorrelationId);
+                    }
                 }
             }
 

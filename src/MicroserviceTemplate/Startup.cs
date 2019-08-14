@@ -65,18 +65,18 @@ namespace MicroserviceTemplate
             // Enable the logging for common 400 bad request errors, for easier traceability
             services.EnableLoggingForBadRequests();
 
-            // Register HttpClientFactory
-            services.AddHttpClient();
-
             // Register CorrelationId middleware
             services.AddCorrelationId();
 
-            // Register Logging for HttpClient
-            services.AddHttpClientLogging(options => { });
+            // Register HttpClientFactory
+            services.AddHttpClient();
 
             // Register global header propagation for any HttpClient that comes from HttpClientFactory
             // default headers are already added like x-correlation-id
             services.AddHeaderPropagation(options => { });
+
+            // Register Logging for HttpClient
+            services.AddHttpClientLogging(Configuration);
 
             // Register HttpLog middleware for "/log"
             services.AddHttpLog(Configuration);

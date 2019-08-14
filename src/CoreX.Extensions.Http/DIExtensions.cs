@@ -2,6 +2,7 @@
 using CoreX.Extensions.Http.HttpClientLogging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -73,10 +74,13 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
 
-        public static IServiceCollection AddHttpClientLogging(this IServiceCollection services, Action<HttpClientLoggingOptions> configure)
+        public static IServiceCollection AddHttpClientLogging(this IServiceCollection services, IConfiguration config = null)
         {
-            services.AddHttpContextAccessor();
-            services.Configure(configure);
+            if (config != null)
+            {
+                services.Configure<HttpClientLoggingOptions>(config.GetSection("HttpClientLogging"));
+            }
+
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IHttpMessageHandlerBuilderFilter, HttpClientLoggingHandlerBuilderFilter>());
             return services;
         }

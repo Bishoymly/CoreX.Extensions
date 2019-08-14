@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,12 @@ namespace MicroserviceTemplate.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        IHttpClientFactory _factory;
+        public ValuesController(IHttpClientFactory factory)
+        {
+            _factory = factory;
+        }
+
         /// <summary>
         /// Gets all value items
         /// </summary>
@@ -18,6 +25,10 @@ namespace MicroserviceTemplate.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            var client = _factory.CreateClient();
+            var result = client.GetAsync("https://www.google.com").Result;
+            result.EnsureSuccessStatusCode();
+
             return new string[] { "value1", "value2" };
         }
 
