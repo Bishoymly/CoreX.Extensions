@@ -16,8 +16,7 @@ namespace System.Net.Http
         public static string ToStringContent(this HttpRequestMessage request, bool showHeaders = true, bool showBody = true, bool html = false)
         {
             var builder = new StringBuilder();
-            builder.Append($"{IsHtml("<i>", html)}Request:{IsHtml("</i>", html)}");
-            builder.Append($"{Environment.NewLine}{IsHtml("<b>", html)}{request.Method} {request.RequestUri.ToString()}{IsHtml("</b>", html)}");
+            builder.Append($"{IsHtml("<i>", html)}Request:{IsHtml("</i>", html)} {IsHtml("<b>", html)}{request.Method} {request.RequestUri.ToString()}{IsHtml("</b>", html)}");
 
             if (showHeaders && request.Headers.Count() > 0)
             {
@@ -46,8 +45,7 @@ namespace System.Net.Http
         public static string ToStringContent(this HttpResponseMessage response, bool showHeaders = true, bool showBody = true, bool html = false)
         {
             var builder = new StringBuilder();
-            builder.Append($"{IsHtml("<i>", html)}Reponse:{IsHtml("</i>", html)}");
-            builder.Append($"{Environment.NewLine}{IsHtml("<b>", html)}{response.StatusCode} {response.ReasonPhrase}{IsHtml("</b>", html)}");
+            builder.Append($"{IsHtml("<i>", html)}Reponse:{IsHtml("</i>", html)} {IsHtml("<b>", html)}{(int)response.StatusCode} {response.ReasonPhrase}{IsHtml("</b>", html)}");
 
             if (showHeaders && response.Headers.Count() > 0)
             {
