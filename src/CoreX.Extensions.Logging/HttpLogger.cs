@@ -36,7 +36,7 @@ namespace CoreX.Extensions.Logging
             if (Options.CurrentValue.Enabled)
             {
                 string key = null;
-                if (_contextAccessor != null)
+                if (_contextAccessor != null && _contextAccessor.HttpContext != null && _contextAccessor.HttpContext.Request != null)
                 {
                     if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
                     {

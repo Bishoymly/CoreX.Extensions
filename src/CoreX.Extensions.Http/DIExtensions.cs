@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CoreX.Extensions.Http.HeaderPropagation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -42,6 +47,29 @@ namespace Microsoft.Extensions.DependencyInjection
             });
 
             return services;
+        }
+
+        public static IServiceCollection AddHeaderPropagation(this IServiceCollection services, Action<HeaderPropagationOptions> configure)
+        {
+            services.AddHttpContextAccessor();
+            services.Configure(configure);
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHttpMessageHandlerBuilderFilter, HeaderPropagationMessageHandlerBuilderFilter>());
+            return services;
+        }
+
+        public static IHttpClientBuilder AddHeaderPropagation(this IHttpClientBuilder builder, Action<HeaderPropagationOptions> configure)
+        {
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.Configure(configure);
+            builder.AddHttpMessageHandler((sp) =>
+            {
+                var options = sp.GetRequiredService<IOptions<HeaderPropagationOptions>>();
+                var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+
+                return new HeaderPropagationMessageHandler(options.Value, contextAccessor);
+            });
+
+            return builder;
         }
     }
 }

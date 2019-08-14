@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CoreX.Extensions.Metrics;
+using CorrelationId;
 using HealthChecks.UI.Client;
 using MicroserviceTemplate.Data;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement;
@@ -56,6 +58,8 @@ namespace MicroserviceTemplate
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+
+                c.EnableAnnotations();
             });
 
             // Enable the logging for common 400 bad request errors, for easier traceability
@@ -64,14 +68,25 @@ namespace MicroserviceTemplate
             // Register HttpClientFactory
             services.AddHttpClient();
 
+            // Register global header propagation for any HttpClient that comes from HttpClientFactory
+            // default headers are already added like x-correlation-id
+            services.AddHeaderPropagation(options => { });
+
+            // Register CorrelationId middleware
+            services.AddCorrelationId();
+
             // Register HttpLog middleware for "/log"
             services.AddHttpLog(Configuration);
 
             // Register Health checks
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], name: "DefaultConnection");
-
+            
             services.AddHealthChecksUI();
+
+            // Register Application Insights with W3C Distributed Tracing
+            services.AddApplicationInsightsTelemetry(o =>
+                o.RequestCollectionOptions.EnableW3CDistributedTracing = true);
 
             // Register the DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -90,8 +105,12 @@ namespace MicroserviceTemplate
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IFeatureManager featureManager)
         {
-            // Set Swagger description to match enabled features
-            OpenApiInfo.Description = GetSwaggerHomepage(featureManager);
+            app.UseCorrelationId(new CorrelationIdOptions
+            {
+                Header = "X-Correlation-ID",
+                UseGuidForCorrelationId = true,
+                UpdateTraceIdentifier = false
+            });
 
             if (featureManager.IsEnabled(Features.ForwardedHeaders))
             {
@@ -135,6 +154,9 @@ namespace MicroserviceTemplate
 
             if (featureManager.IsEnabled(Features.Swagger))
             {
+                // Set Swagger description to match enabled features
+                this.OpenApiInfo.Description = GetSwaggerHomepage(featureManager);
+
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
