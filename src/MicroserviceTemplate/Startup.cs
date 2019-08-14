@@ -84,8 +84,12 @@ namespace MicroserviceTemplate
             // Register Health checks
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], name: "DefaultConnection");
-            
-            services.AddHealthChecksUI();
+
+            if (Configuration["FeatureManagement:HealthUI"] == "True")
+            {
+                // Register HealthChecks UI
+                services.AddHealthChecksUI();
+            }
 
             // Register Application Insights with W3C Distributed Tracing
             services.AddApplicationInsightsTelemetry(o =>
