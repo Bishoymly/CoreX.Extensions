@@ -68,12 +68,15 @@ namespace MicroserviceTemplate
             // Register HttpClientFactory
             services.AddHttpClient();
 
+            // Register CorrelationId middleware
+            services.AddCorrelationId();
+
+            // Register Logging for HttpClient
+            services.AddHttpClientLogging(options => { });
+
             // Register global header propagation for any HttpClient that comes from HttpClientFactory
             // default headers are already added like x-correlation-id
             services.AddHeaderPropagation(options => { });
-
-            // Register CorrelationId middleware
-            services.AddCorrelationId();
 
             // Register HttpLog middleware for "/log"
             services.AddHttpLog(Configuration);

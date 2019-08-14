@@ -1,4 +1,5 @@
 ﻿using CoreX.Extensions.Http.HeaderPropagation;
+using CoreX.Extensions.Http.HttpClientLogging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -70,6 +71,14 @@ namespace Microsoft.Extensions.DependencyInjection
             });
 
             return builder;
+        }
+
+        public static IServiceCollection AddHttpClientLogging(this IServiceCollection services, Action<HttpClientLoggingOptions> configure)
+        {
+            services.AddHttpContextAccessor();
+            services.Configure(configure);
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHttpMessageHandlerBuilderFilter, HttpClientLoggingHandlerBuilderFilter>());
+            return services;
         }
     }
 }

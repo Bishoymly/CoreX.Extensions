@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Http
                 builder.Append($"{Environment.NewLine}{IsHtml("<i>", html)}Headers:{IsHtml("</i>", html)}");
                 foreach (var header in request.Headers)
                 {
-                    builder.Append($"{Environment.NewLine}{IsHtml("<span style='opacity:0.5;'>", html)}{header.Key}:{header.Value}{IsHtml("</span>", html)}");
+                    builder.Append($"{Environment.NewLine}{IsHtml("<span style='opacity:0.5;'>", html)}{header.Key}:{string.Join(",", header.Value)}{IsHtml("</span>", html)}");
                 }
             }
 
