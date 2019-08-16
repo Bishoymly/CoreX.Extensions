@@ -33,7 +33,7 @@ services.AddHeaderPropagation(options =>
     options.HeaderNames.Add("X-My-Header");
 });
 ```
-Automatically propagate (forward) headers from the current requests into any outgoing requests. Works with all HttpClients created using IHttpClientFactory.
+Automatically propagate (forward) headers from the current requests into any outgoing requests. Works with all HttpClients created using IHttpClientFactory. [Default propagated headers](https://github.com/Bishoymly/CoreX.Extensions/blob/master/src/CoreX.Extensions.Http/HeaderPropagation/HeaderPropagationOptions.cs#L13)
 Useful to propagate correlation Id or authorization token.
 
 Thanks to implementation from [David Fowler](https://gist.github.com/davidfowl/c34633f1ddc519f030a1c0c5abe8e867)
