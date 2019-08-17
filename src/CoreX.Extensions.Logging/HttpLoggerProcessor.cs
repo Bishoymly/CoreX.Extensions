@@ -20,6 +20,7 @@ namespace CoreX.Extensions.Logging
 
         private LogLevel _logLevel = LogLevel.Trace;
         private string _key;
+        private string _user;
         private string _query;
 
         public HttpLoggerProcessor(LogMiddleware middleware, HttpContext context)
@@ -85,6 +86,9 @@ namespace CoreX.Extensions.Logging
             if (!string.IsNullOrEmpty(_key) && message.HttpLoggerKey != _key)
                 return false;
 
+            if (!string.IsNullOrEmpty(_user) && !string.Equals(message.User,_user, StringComparison.OrdinalIgnoreCase))
+                return false;
+
             return true;
         }
 
@@ -114,7 +118,7 @@ namespace CoreX.Extensions.Logging
             if (query.ContainsKey("level"))
             {
                 _logLevel = ToLogLevel(query["level"]);
-                q.Append("level=" + query["level"]);
+                q.Append($"level={query["level"]}&");
             }
 
             if (query.ContainsKey("my"))
@@ -134,8 +138,14 @@ namespace CoreX.Extensions.Logging
                 }
             }
 
-            if(!string.IsNullOrEmpty(_key))
-                q.Append("key=" + query["key"]);
+            if (!string.IsNullOrEmpty(_key))
+                q.Append($"key={_key}&");
+
+            if (query.ContainsKey("user"))
+            {
+                _user = query["user"];
+                q.Append($"user={_user}&");
+            }
 
             _query = q.ToString();
         }

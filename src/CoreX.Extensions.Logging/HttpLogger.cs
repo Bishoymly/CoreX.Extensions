@@ -36,20 +36,29 @@ namespace CoreX.Extensions.Logging
             if (Options.CurrentValue.Enabled)
             {
                 string key = null;
-                if (_contextAccessor != null && _contextAccessor.HttpContext != null && _contextAccessor.HttpContext.Request != null)
+                string user = null;
+                if (_contextAccessor != null && _contextAccessor.HttpContext != null)
                 {
-                    if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
+                    if (_contextAccessor.HttpContext.Request != null)
                     {
-                        key = _contextAccessor.HttpContext.Request.Cookies["HttpLogger"];
+                        if (_contextAccessor.HttpContext.Request.Cookies.ContainsKey("HttpLogger"))
+                        {
+                            key = _contextAccessor.HttpContext.Request.Cookies["HttpLogger"];
+                        }
+
+                        if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("HttpLogger"))
+                        {
+                            key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
+                        }
                     }
 
-                    if (_contextAccessor.HttpContext.Request.Headers.ContainsKey("HttpLogger"))
+                    if (_contextAccessor.HttpContext.User != null && _contextAccessor.HttpContext.User.Identity != null && _contextAccessor.HttpContext.User.Identity.IsAuthenticated)
                     {
-                        key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
+                        user = _contextAccessor.HttpContext.User.Identity.Name;
                     }
                 }
 
-                _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), key));
+                _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), user, key));
             }
         }
     }
