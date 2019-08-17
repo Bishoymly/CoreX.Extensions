@@ -34,6 +34,11 @@ Display only warnings
 /log?level=warning
 ```
 
+Display only logs for a specific user: uses the username authenticated for the HttpContext
+```
+/log?user=admin@email.com
+```
+
 Display only my logs: uses cookies to display logs coming only from my browser
 ```
 /log?my
