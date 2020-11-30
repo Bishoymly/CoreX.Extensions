@@ -8,7 +8,7 @@ This repo contains multiple extensions libraries (nuget packages):
 ## Getting started
 The fastest way is to install the Microservice project template using dotnet new command:
 ```
-dotnet new -i CoreX.Microservices.Templates::0.3.0-prerelease
+dotnet new -i CoreX.Microservices.Templates::0.3.1-prerelease
 ```
 
 Then create a directory with the name of your project:
