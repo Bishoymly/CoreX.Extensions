@@ -1,4 +1,6 @@
 ﻿using CorrelationId;
+using CorrelationId.Abstractions;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Net.Http;

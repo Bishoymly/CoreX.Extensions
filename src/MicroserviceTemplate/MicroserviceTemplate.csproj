@@ -1,26 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <UserSecretsId>82bd3644-9770-43b6-8c5a-d3c7d181346e</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="2.2.1" />
-    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="2.2.32" />
-    <PackageReference Include="CoreX.Extensions.Http" Version="0.2.0" />
-    <PackageReference Include="CoreX.Extensions.Logging" Version="0.1.1" />
-    <PackageReference Include="CoreX.Extensions.Metrics" Version="0.0.2-prerelease" />
-    <PackageReference Include="CorrelationId" Version="2.1.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.0-beta1" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.FeatureManagement" Version="1.0.0-preview-009000001-1251" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.9" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.0.0-rc2" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="3.2.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="3.1.3" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="3.1.2" />
+    <PackageReference Include="CorrelationId" Version="3.0.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.16.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.FeatureManagement" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreX.Extensions.Http\CoreX.Extensions.Http.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Metrics\CoreX.Extensions.Metrics.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

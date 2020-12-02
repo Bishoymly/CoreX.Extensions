@@ -6,6 +6,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreX.Extensions.Logging
 {
@@ -40,10 +41,15 @@ namespace CoreX.Extensions.Logging
 
             // Start writer
             _writer = new StreamWriter(context.Response.Body);
-            _writer.AutoFlush = true;
-            _writer.WriteLine("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
-
+            WriteLineAsync("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
+            
             InitializeQuery(context.Request.Query);
+        }
+
+        private async Task WriteLineAsync(string value)
+        {
+            await _writer.WriteLineAsync(value);
+            await _writer.FlushAsync();
         }
 
         public void InitializeRemotes()
@@ -190,15 +196,15 @@ namespace CoreX.Extensions.Logging
             }
         }
 
-        internal virtual void WriteMessage(LogMessageEntry message)
+        internal async virtual void WriteMessage(LogMessageEntry message)
         {
             if (message.Remote == null)
             {
-                _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
+                await WriteLineAsync($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
                 if (message.Exception != null)
                 {
-                    _writer.WriteLine($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
-                    _writer.WriteLine($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
+                    await WriteLineAsync($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
+                    await WriteLineAsync($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
                 }
             }
             else
@@ -211,7 +217,7 @@ namespace CoreX.Extensions.Logging
                 {
                     msg = msg.Insert(i + 1, message.Remote + ": ");
                 }
-                _writer.WriteLine(msg);
+                await WriteLineAsync(msg);
             }
         }
 

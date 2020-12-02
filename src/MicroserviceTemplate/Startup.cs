@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CoreX.Extensions.Metrics;
 using CorrelationId;
+using CorrelationId.DependencyInjection;
+
 using HealthChecks.UI.Client;
 using MicroserviceTemplate.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 
@@ -44,7 +41,7 @@ namespace MicroserviceTemplate
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
 
             // Register Feature Management
             services.AddFeatureManagement();
@@ -66,8 +63,8 @@ namespace MicroserviceTemplate
             services.EnableLoggingForBadRequests();
 
             // Register CorrelationId middleware
-            services.AddCorrelationId();
-
+            services.AddDefaultCorrelationId();
+            
             // Register HttpClientFactory
             services.AddHttpClient();
 
@@ -91,9 +88,8 @@ namespace MicroserviceTemplate
                 services.AddHealthChecksUI();
             }
 
-            // Register Application Insights with W3C Distributed Tracing
-            services.AddApplicationInsightsTelemetry(o =>
-                o.RequestCollectionOptions.EnableW3CDistributedTracing = true);
+            // Register Application Insights
+            services.AddApplicationInsightsTelemetry();
 
             // Register the DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -110,28 +106,23 @@ namespace MicroserviceTemplate
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IFeatureManager featureManager)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env, IFeatureManager featureManager)
         {
-            app.UseCorrelationId(new CorrelationIdOptions
-            {
-                Header = "X-Correlation-ID",
-                UseGuidForCorrelationId = true,
-                UpdateTraceIdentifier = false
-            });
+            app.UseCorrelationId();
 
-            if (featureManager.IsEnabled(Features.ForwardedHeaders))
+            if (await featureManager.IsEnabledAsync(Features.ForwardedHeaders))
             {
                 // Enables ForwardedHeaders to enable hosting behind reverse proxies like NGINX or inside Kubernetes
                 app.UseForwardedHeaders();
             }
 
-            if (featureManager.IsEnabled(Features.HttpLogger))
+            if (await featureManager.IsEnabledAsync(Features.HttpLogger))
             {
                 // Enable HttpLog middleware for "/log"
                 app.UseHttpLog();
             }
 
-            if (featureManager.IsEnabled(Features.Healthz))
+            if (await featureManager.IsEnabledAsync(Features.Healthz))
             {
                 // Enable middleware for "/healthz"
                 app.UseHealthChecks("/healthz", new HealthCheckOptions()
@@ -141,7 +132,7 @@ namespace MicroserviceTemplate
                 });
             }
 
-            if (featureManager.IsEnabled(Features.HealthUI))
+            if (await featureManager.IsEnabledAsync(Features.HealthUI))
             {
                 app.UseHealthChecksUI();
             }
@@ -159,10 +150,10 @@ namespace MicroserviceTemplate
 
             app.UseHttpsRedirection();
 
-            if (featureManager.IsEnabled(Features.Swagger))
+            if (await featureManager.IsEnabledAsync(Features.Swagger))
             {
                 // Set Swagger description to match enabled features
-                this.OpenApiInfo.Description = GetSwaggerHomepage(featureManager);
+                this.OpenApiInfo.Description = await GetSwaggerHomepage(featureManager);
 
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
@@ -176,22 +167,29 @@ namespace MicroserviceTemplate
                 });
             }
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
 
         // This method is used to generate the description in the swagger UI page, according to the available features
-        public string GetSwaggerHomepage(IFeatureManager featureManager)
+        public async Task<string> GetSwaggerHomepage(IFeatureManager featureManager)
         {
             var description = new StringBuilder();
-            if (featureManager.IsEnabled(Features.Metrics))
+            if (await featureManager.IsEnabledAsync(Features.Metrics))
                 description.Append(HomeGenerator.BasicHtml());
             description.Append("<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>");
             description.Append("<ul>");
-            if (featureManager.IsEnabled(Features.HttpLogger))
+            if (await featureManager.IsEnabledAsync(Features.HttpLogger))
                 description.Append("<li><a target='_blank' href='/log?level=all'>/log</a> monitor your beautiful logs from the comfort of your browser </li>");
-            if (featureManager.IsEnabled(Features.Healthz))
+            if (await featureManager.IsEnabledAsync(Features.Healthz))
                 description.Append("<li><a target='_blank' href='/healthz'>/healthz</a> url to monitor your application health status </li>");
-            if (featureManager.IsEnabled(Features.HealthUI))
+            if (await featureManager.IsEnabledAsync(Features.HealthUI))
                 description.Append("<li><a target='_blank' href='/healthchecks-ui'>/healthchecks-ui</a> UI to monitor your application health status </li>");
             description.Append("</ul>");
 

@@ -19,12 +19,12 @@ namespace CoreX.Extensions.Http
             return result.Content.ReadAsStringAsync().Result;
         }
 
-        public T Get<T>(string url)
+        public string GetString(string url)
         {
             var result = client.GetAsync(url).Result;
             result.EnsureSuccessStatusCode();
 
-            return result.Content.ReadAsAsync<T>().Result;
+            return result.Content.ReadAsStringAsync().Result;
         }
     }
 }
