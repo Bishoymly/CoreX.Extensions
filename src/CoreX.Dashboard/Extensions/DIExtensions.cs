@@ -24,7 +24,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddControllersWithViews()
                 .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
 
-            //services.Add(new ServiceDescriptor(typeof(DeveloperDashboardMiddleware), typeof(DeveloperDashboardMiddleware), ServiceLifetime.Singleton));
             return services;
         }
 
@@ -44,7 +43,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     pattern: "{controller=DeveloperDashboard}/{action=Index}/{id?}");
             });
 
-            //app.UseMiddleware<DeveloperDashboardMiddleware>();
             return app;
         }
     }
