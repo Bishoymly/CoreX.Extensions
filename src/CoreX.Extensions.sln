@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreX.Extensions.Http", "Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroserviceTemplate", "MicroserviceTemplate\MicroserviceTemplate.csproj", "{DD76D4E4-05C9-4FEB-910F-6E1199922C60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreX.Extensions.Metrics", "CoreX.Extensions.Metrics\CoreX.Extensions.Metrics.csproj", "{AF851557-BD7D-42FD-B451-C0FF679BD023}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreX.Extensions.Metrics", "CoreX.Extensions.Metrics\CoreX.Extensions.Metrics.csproj", "{AF851557-BD7D-42FD-B451-C0FF679BD023}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreX.Dashboard", "CoreX.Dashboard\CoreX.Dashboard.csproj", "{596D9236-DB73-4E12-84D9-BDBE727C3ADC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AF851557-BD7D-42FD-B451-C0FF679BD023}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF851557-BD7D-42FD-B451-C0FF679BD023}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF851557-BD7D-42FD-B451-C0FF679BD023}.Release|Any CPU.Build.0 = Release|Any CPU
+		{596D9236-DB73-4E12-84D9-BDBE727C3ADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{596D9236-DB73-4E12-84D9-BDBE727C3ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{596D9236-DB73-4E12-84D9-BDBE727C3ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{596D9236-DB73-4E12-84D9-BDBE727C3ADC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -41,8 +41,8 @@ namespace MicroserviceTemplate
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
+            services.AddControllersWithViews();
+         
             // Register Feature Management
             services.AddFeatureManagement();
 
@@ -77,6 +77,9 @@ namespace MicroserviceTemplate
 
             // Register HttpLog middleware for "/log"
             services.AddHttpLog(Configuration);
+
+            // Register Developer Dashboard middleware
+            services.AddDeveloperDashboard();
 
             // Register Health checks
             services.AddHealthChecks()
@@ -163,13 +166,13 @@ namespace MicroserviceTemplate
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "MicroserviceTemplate V1");
-                    c.RoutePrefix = string.Empty;
                 });
             }
 
             app.UseRouting();
-
             app.UseAuthorization();
+
+            app.UseDeveloperDashboard(env);
 
             app.UseEndpoints(endpoints =>
             {

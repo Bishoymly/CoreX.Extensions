@@ -1,0 +1,147 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="generator" content="CoreX.Extension.Metrics">
+    <title>Developer Dashboard</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/e80d3696e6.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <link rel="apple-touch-icon" sizes="57x57" href="/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/icon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        .text-success {
+            color: #12ca93 !important
+        }
+
+        .text-warning {
+            color: #ecb22f !important
+        }
+
+        .text-danger {
+            color: #e95f6a !important
+        }
+
+        .table td {
+            color: #808080;
+            padding: 1rem;
+        }
+
+        .table th {
+            border-top: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>Developer Dashboard</h2>
+            <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+                <h4 class="mb-3">Server</h4>
+                <div class="card">
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">Server</small>
+                                <h6 class="my-0">@Environment.MachineName</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">OS</small>
+                                <h6 class="my-0">@Environment.OSVersion</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div class="container pl-0 pr-0">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Cores</small>
+                                        <h6 class="my-0">@Environment.ProcessorCount</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Memory</small>
+                                        <h6 class="my-0">@(Environment.WorkingSet/1024/1024) MB</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-none list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">User</small>
+                                <h6 class="my-0">@Environment.UserDomainName\@Environment.UserName</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8 order-md-1">
+                <h4 class="mb-3">Requests</h4>
+                <div class="card">
+                    <h6>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Method</th>
+                                    <th scope="col">Path</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-success"><i class="fas fa-circle"></i></td>
+                                    <td class="text-success">200</td>
+                                    <td>GET</td>
+                                    <td>/api/swagger/index.html</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-warning"><i class="fas fa-circle"></i></td>
+                                    <td class="text-warning">400</td>
+                                    <td>GET</td>
+                                    <td>/api/swagger/index.html</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-danger"><i class="fas fa-circle"></i></td>
+                                    <td class="text-danger">500</td>
+                                    <td>GET</td>
+                                    <td>/api/values</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
