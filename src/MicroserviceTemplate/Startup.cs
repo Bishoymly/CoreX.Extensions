@@ -42,6 +42,8 @@ namespace MicroserviceTemplate
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddMetrics();
          
             // Register Feature Management
             services.AddFeatureManagement();
@@ -112,6 +114,7 @@ namespace MicroserviceTemplate
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env, IFeatureManager featureManager)
         {
             app.UseCorrelationId();
+            app.UseMetrics();
 
             if (await featureManager.IsEnabledAsync(Features.ForwardedHeaders))
             {

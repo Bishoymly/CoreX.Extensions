@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -34,6 +34,8 @@
     <Content Remove="wwwroot\icon\ms-icon-150x150.png" />
     <Content Remove="wwwroot\icon\ms-icon-310x310.png" />
     <Content Remove="wwwroot\icon\ms-icon-70x70.png" />
+    <Content Remove="wwwroot\images\logs.png" />
+    <Content Remove="wwwroot\images\swagger.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +66,8 @@
     <EmbeddedResource Include="wwwroot\icon\ms-icon-150x150.png" />
     <EmbeddedResource Include="wwwroot\icon\ms-icon-310x310.png" />
     <EmbeddedResource Include="wwwroot\icon\ms-icon-70x70.png" />
+    <EmbeddedResource Include="wwwroot\images\logs.png" />
+    <EmbeddedResource Include="wwwroot\images\swagger.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -101,6 +105,10 @@
     <None Include="wwwroot\icon\ms-icon-150x150.png" />
     <None Include="wwwroot\icon\ms-icon-310x310.png" />
     <None Include="wwwroot\icon\ms-icon-70x70.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreX.Extensions.Metrics\CoreX.Extensions.Metrics.csproj" />
   </ItemGroup>
 
 </Project>
