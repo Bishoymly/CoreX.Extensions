@@ -59,6 +59,10 @@
             text-decoration: none !important;
             color: #000;
         }
+
+        .card-title {
+            margin: .75rem -.2rem;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -87,6 +91,22 @@
                         </div>
                     </a>
                 </div>
+                <div class="col-2">
+                    <a href="/healthz" target="_blank" class="nounderline">
+                        <div class="card">
+                            <div class="card-body">
+                                <img src="/devdashcontent/images/healthz.png" class="card-img-top" />
+                                
+                                <h5 class="card-title text-black-50 healthz-checking"><i class="fas fa-sync-alt"></i> Checking</h5>
+                                <h5 class="card-title text-black-50 healthz-none d-none"><i class="fas fa-circle-notch"></i> N/A</h5>
+                                <h5 class="card-title text-success healthz-healthy d-none"><i class="fas fa-check-circle"></i> Healthy</h5>
+                                <h5 class="card-title text-danger healthz-unhealthy d-none"><i class="fas fa-times-circle"></i> Unhealthy</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                
             </div>
         </div>
     </div>
@@ -166,6 +186,31 @@
         </div>
     </div>
 </div>
+
+    <script type="text/javascript">
+
+        const Http = new XMLHttpRequest();
+        const url = '/healthz';
+        Http.open("GET", url);
+        Http.send();
+
+        Http.onreadystatechange = (e) => {
+            document.getElementsByClassName('healthz-checking')[0].style.display = 'none';
+            if (Http.status.toString()[0] == '2') {
+                document.getElementsByClassName('healthz-healthy')[0].classList.remove("d-none");
+            }
+            else {
+                if (Http.status.toString()[0] == '4') {
+                    document.getElementsByClassName('healthz-none')[0].classList.remove("d-none");
+                }
+                else {
+                    document.getElementsByClassName('healthz-unhealthy')[0].classList.remove("d-none");
+                }
+            }
+        }
+
+    </script>
+
 </body>
 </html>
 

@@ -34,6 +34,7 @@
     <Content Remove="wwwroot\icon\ms-icon-150x150.png" />
     <Content Remove="wwwroot\icon\ms-icon-310x310.png" />
     <Content Remove="wwwroot\icon\ms-icon-70x70.png" />
+    <Content Remove="wwwroot\images\healthz.png" />
     <Content Remove="wwwroot\images\logs.png" />
     <Content Remove="wwwroot\images\swagger.png" />
   </ItemGroup>
@@ -66,6 +67,7 @@
     <EmbeddedResource Include="wwwroot\icon\ms-icon-150x150.png" />
     <EmbeddedResource Include="wwwroot\icon\ms-icon-310x310.png" />
     <EmbeddedResource Include="wwwroot\icon\ms-icon-70x70.png" />
+    <EmbeddedResource Include="wwwroot\images\healthz.png" />
     <EmbeddedResource Include="wwwroot\images\logs.png" />
     <EmbeddedResource Include="wwwroot\images\swagger.png" />
   </ItemGroup>
