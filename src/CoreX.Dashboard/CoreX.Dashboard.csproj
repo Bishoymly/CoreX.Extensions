@@ -37,6 +37,8 @@
     <Content Remove="wwwroot\images\healthz.png" />
     <Content Remove="wwwroot\images\logs.png" />
     <Content Remove="wwwroot\images\swagger.png" />
+    <Content Remove="wwwroot\js\realtime.js" />
+    <Content Remove="wwwroot\js\signalr.min.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +72,7 @@
     <EmbeddedResource Include="wwwroot\images\healthz.png" />
     <EmbeddedResource Include="wwwroot\images\logs.png" />
     <EmbeddedResource Include="wwwroot\images\swagger.png" />
+    <EmbeddedResource Include="wwwroot\js\realtime.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -107,6 +110,7 @@
     <None Include="wwwroot\icon\ms-icon-150x150.png" />
     <None Include="wwwroot\icon\ms-icon-310x310.png" />
     <None Include="wwwroot\icon\ms-icon-70x70.png" />
+    <EmbeddedResource Include="wwwroot\js\signalr.min.js" />
   </ItemGroup>
 
   <ItemGroup>

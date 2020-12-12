@@ -24,6 +24,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddControllersWithViews()
                 .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(part));
 
+            services.AddSignalR();
+            services.AddHostedService<DevDashboardBackground>();
+
             return services;
         }
 
@@ -41,6 +44,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=DeveloperDashboard}/{action=Index}/{id?}");
+
+                endpoints.MapHub<DevDashboardHub>("/devdash/realtime");
             });
 
             return app;
