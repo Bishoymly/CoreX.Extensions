@@ -3,8 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/devdash/realtime").build();
 
 connection.on("RequestStarted", function (request) {
-    console.info('Request Started: ' + request.path);
-
+    
     var tbody = document.getElementById('requests').getElementsByTagName('tbody')[0];
     var row = tbody.insertRow(0);
     row.id = request.id;
@@ -20,7 +19,6 @@ connection.on("RequestStarted", function (request) {
 });
 
 connection.on("RequestEnded", function (request) {
-    console.info('Request Ended: ' + request.path);
 
     var row = document.getElementById(request.id);
     if (row) {
@@ -32,6 +30,22 @@ connection.on("RequestEnded", function (request) {
             cells[4].innerHTML = '<div>' + request.duration + ' ms</div>';
         }
     }
+});
+
+connection.on("ExceptionAdded", function (ex) {
+
+    var tbody = document.getElementById('exceptions').getElementsByTagName('tbody')[0];
+    var row = tbody.insertRow(0);
+    
+    //row.outerHTML = '<tr data-toggle="tooltip" data-placement="bottom" title="' + ex.stackTrace + '">' +
+      
+    row.insertCell().innerHTML = '<div>' + ex.type + '</div>';
+    row.insertCell().innerHTML = '<div>' + ex.message + '</div>';
+    //row.attributes.title = ex.stackTrace;
+
+    setTimeout(function () {
+        row.className = "in";
+    }, 0);
 });
 
 function getColor(status) {

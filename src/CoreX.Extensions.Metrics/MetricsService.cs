@@ -14,8 +14,20 @@ namespace CoreX.Extensions.Metrics
     {
         public List<Request> Requests { get; } = new List<Request>();
 
+        public List<MetricsException> Exceptions { get; } = new List<MetricsException>();
+
         public event EventHandler<RequestEventArgs> RequestStarted;
         public event EventHandler<RequestEventArgs> RequestEnded;
+        public event EventHandler<ExceptionEventArgs> ExceptionAdded;
+
+        public MetricsException AddException(HttpContext context, Exception ex)
+        {
+            var e = new MetricsException(ex);
+            
+            Exceptions.Add(e);
+            ExceptionAdded?.Invoke(this, new ExceptionEventArgs { Exception = e });
+            return e;
+        }
 
         public Request BeginRequest(HttpContext context)
         {
@@ -29,9 +41,7 @@ namespace CoreX.Extensions.Metrics
             };
             
             Requests.Add(request);
-
             RequestStarted?.Invoke(this, new RequestEventArgs { Request = request });
-
             return request;
         }
 

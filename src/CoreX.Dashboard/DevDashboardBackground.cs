@@ -19,8 +19,14 @@ namespace CoreX.Dashboard
             _metrics = metrics;
             _metrics.RequestStarted += Metrics_RequestStarted;
             _metrics.RequestEnded += Metrics_RequestEnded;
+            _metrics.ExceptionAdded += Metrics_ExceptionAdded;
 
             _hub = hub;
+        }
+
+        private async void Metrics_ExceptionAdded(object sender, Extensions.Metrics.Events.ExceptionEventArgs e)
+        {
+            await _hub.Clients.All.SendAsync("ExceptionAdded", e.Exception);
         }
 
         private async void Metrics_RequestEnded(object sender, Extensions.Metrics.Events.RequestEventArgs e)

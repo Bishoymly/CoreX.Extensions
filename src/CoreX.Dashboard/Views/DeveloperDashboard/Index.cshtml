@@ -61,7 +61,7 @@
 
         .table.anim tr.in td div {
             padding: 0.7rem;
-            max-height: 50px;
+            max-height: none;
             opacity: 1;
             transition: max-height 0.3s, padding 0.3s, opacity 0.3s;
         }
@@ -124,86 +124,104 @@
                         </div>
                     </a>
                 </div>
-
-                
             </div>
         </div>
     </div>
     <div class="container-fluid">
         <div class="row">
-        <div class="col-md-4 order-md-2 mb-4">
-            <h4 class="mb-3">Server</h4>
-            <div class="card">
-                <ul class="list-group list-group-flush mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <small class="text-muted">Server</small>
-                            <h6 class="my-0">@Environment.MachineName</h6>
-                        </div>
-                        <span class="text-muted"></span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <small class="text-muted">OS</small>
-                            <h6 class="my-0">@Environment.OSVersion</h6>
-                        </div>
-                        <span class="text-muted"></span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-condensed">
-                        <div class="container pl-0 pr-0">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <small class="text-muted">Cores</small>
-                                    <h6 class="my-0">@Environment.ProcessorCount</h6>
-                                </div>
-                                <div class="col-md-6">
-                                    <small class="text-muted">Memory</small>
-                                    <h6 class="my-0">@(Environment.WorkingSet/1024/1024) MB</h6>
+            <div class="d-none col-md-4 order-md-2 mb-4">
+                <h4 class="mb-3">Server</h4>
+                <div class="card">
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">Server</small>
+                                <h6 class="my-0">@Environment.MachineName</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">OS</small>
+                                <h6 class="my-0">@Environment.OSVersion</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div class="container pl-0 pr-0">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Cores</small>
+                                        <h6 class="my-0">@Environment.ProcessorCount</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Memory</small>
+                                        <h6 class="my-0">@(Environment.WorkingSet/1024/1024) MB</h6>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <li class="d-none list-group-item d-flex justify-content-between lh-condensed">
-                        <div>
-                            <small class="text-muted">User</small>
-                            <h6 class="my-0">@Environment.UserDomainName\@Environment.UserName</h6>
-                        </div>
-                        <span class="text-muted"></span>
-                    </li>
-                </ul>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <small class="text-muted">User</small>
+                                <h6 class="my-0">@Environment.UserDomainName\@Environment.UserName</h6>
+                            </div>
+                            <span class="text-muted"></span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="col-md-8 order-md-1">
-            <h4 class="mb-3">Requests</h4>
-            <div class="card">
-                <h6>
-                    <table class="table anim" id="requests">
-                        <thead>
-                            <tr>
-                                <th scope="col"></th>
-                                <th scope="col">Code</th>
-                                <th scope="col">Method</th>
-                                <th scope="col">Path</th>
-                                <th scope="col">Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
-                            {
-                                <tr class="in" id="@request.Id">
-                                    <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
-                                    <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
-                                    <td><div>@request.Method</div></td>
-                                    <td><div>@request.Path</div></td>
-                                    <td><div>@request.Duration ms</div></td>
+            <div class="col-md-7 order-md-1">
+                <h4 class="mb-3">Requests</h4>
+                <div class="card">
+                        <table class="table anim" id="requests">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Method</th>
+                                    <th scope="col">Path</th>
+                                    <th scope="col">Duration</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </h6>
+                            </thead>
+                            <tbody>
+                                @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
+                                {
+                                    <tr class="in" id="@request.Id">
+                                        <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
+                                        <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
+                                        <td><div>@request.Method</div></td>
+                                        <td><div>@request.Path</div></td>
+                                        <td><div>@request.Duration ms</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                </div>
+            </div>
+            <div class="col-md-5 order-md-1">
+                <h4 class="mb-3">Exceptions</h4>
+                <div class="card">
+                        <table class="table anim" id="exceptions">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
+                                {
+                                    <tr class="in" data-toggle="tooltip" data-placement="bottom" title="@ex.StackTrace">
+                                        <td><div>@ex.Type</div></td>
+                                        <td><div>@ex.Message</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                </div>
             </div>
         </div>
-    </div>
 </div>
 
     <script type="text/javascript">
