@@ -11,11 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="generator" content="CoreX.Extension.Metrics">
-    <title>CoreX Developer Dashboard</title>
+    <title>@(System.AppDomain.CurrentDomain.FriendlyName) - CoreX Developer Dashboard</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/e80d3696e6.js" crossorigin="anonymous"></script>
-    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="/devdashcontent/js/signalr.min.js"></script>
     <script src="/devdashcontent/js/realtime.js"></script>
     <link rel="apple-touch-icon" sizes="57x57" href="/devdashcontent/icon/apple-icon-57x57.png">
@@ -36,6 +37,10 @@
     <meta name="msapplication-TileImage" content="/devdashcontent/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <style>
+        body {
+            padding-top: 80px;
+        }
+
         .text-success {
             color: #12ca93 !important
         }
@@ -53,17 +58,18 @@
         }
 
         .table.anim tr td div {
-            padding: 0 0.7rem;
+            padding: 0 0.8rem;
             box-sizing: border-box;
             max-height: 0px;
             opacity: 0;
+            transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
         }
 
         .table.anim tr.in td div {
-            padding: 0.7rem;
+            padding: 0.5rem 0.8rem;
             max-height: none;
             opacity: 1;
-            transition: max-height 0.3s, padding 0.3s, opacity 0.3s;
+            transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
         }
 
         .table th {
@@ -82,147 +88,112 @@
         .logo {
             width: 76px;
         }
+
+        .popover-body {
+            padding: 0;
+        }
+
+        .navbar-nav .nav-link {
+            padding-left: 1rem !important;
+        }
+
+        .tooltip-inner {
+            max-width: 500px;
+            /* If max-width does not work, try using width instead */
+            width: 500px;
+        }
     </style>
 </head>
 <body class="bg-light">
-    <div class="container">
-        <div class="py-5 text-center">
-            <h2><img src="/devdashcontent/images/corex.png" class="logo" /> Developer Dashboard</h2>
-            <p class="lead">This dashboard is meant for developers monitoring and troubleshooting their service. It's not supposed to be used in production without authorization.</p>
-            <div class="row justify-content-md-center">
-                <div class="col-2">
-                    <a href="/swagger" target="_blank" class="nounderline">
-                        <div class="card">
-                            <div class="card-body">
-                                <img src="/devdashcontent/images/swagger.png" class="card-img-top" />
-                                <h5 class="card-title">Swagger</h5>
-                            </div>
-                        </div>
-                    </a>
+    <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
+        <a class="navbar-brand" href="#">
+            <img src="/devdashcontent/images/corex.png" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+            @(System.AppDomain.CurrentDomain.FriendlyName)
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Realtime</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Performance</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Failures</a>
+                </li>
+            </ul>
+            <div class="navbar-nav">
+                <a href="/swagger" target="_blank" class="nav-link">
+                    <img src="/devdashcontent/images/swagger.png" height="19" /> Swagger
+                </a>
+                <a href="/log" target="_blank" class="nav-link">
+                    <i class="fas fa-align-left"></i> Logs
+                </a>
+                <a href="/healthz" target="_blank" class="nav-link healthz-none">
+                    <span class="text-white-50 healthz-checking"><i class="fas fa-sync-alt"></i></span>
+                    <!--<span class="card-title text-white-50 healthz-none d-none"><i class="fas fa-circle-notch"></i> N/A</span>-->
+                    <span class="text-success healthz-healthy d-none"><i class="fas fa-check-circle"></i> Healthy</span>
+                    <span class="text-danger healthz-unhealthy d-none"><i class="fas fa-times-circle"></i></span>
+                </a>
+                <a tabindex="0" href="#" class="nav-link" data-toggle="popover" data-placement="bottom" data-html="true" title="Server Info" data-trigger="focus" data-content="<ul class='list-group list-group-flush mb-3'><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>Server</small><h6 class='my-0'>@Environment.MachineName</h6></div><span class='text-muted'></span></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>OS</small><h6 class='my-0'>@Environment.OSVersion</h6></div><span class='text-muted'></span></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div class='container pl-0 pr-0'><div class='row'><div class='col-md-6'><small class='text-muted'>Cores</small><h6 class='my-0'>@Environment.ProcessorCount</h6></div><div class='col-md-6'><small class='text-muted'>Memory</small><h6 class='my-0'>@(Environment.WorkingSet/1024/1024) MB</h6></div></div></div></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>User</small><h6 class='my-0'>@Environment.UserDomainName\@Environment.UserName</h6></div><span class='text-muted'></span></li></ul>">@Environment.MachineName</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 order-md-1">
+                <h5 class="mb-3">Requests</h5>
+                <div class="card">
+                    <table class="table anim" id="requests">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Method</th>
+                                <th scope="col">Path</th>
+                                <th scope="col">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
+                            {
+                                <tr class="in" id="@request.Id">
+                                    <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
+                                    <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
+                                    <td><div>@request.Method</div></td>
+                                    <td><div>@request.Path</div></td>
+                                    <td><div>@request.Duration ms</div></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-2">
-                    <a href="/log" target="_blank" class="nounderline">
-                        <div class="card">
-                            <div class="card-body">
-                                <img src="/devdashcontent/images/logs.png" class="card-img-top" />
-                                <h5 class="card-title">Logs</h5>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-2">
-                    <a href="/healthz" target="_blank" class="nounderline">
-                        <div class="card">
-                            <div class="card-body">
-                                <img src="/devdashcontent/images/healthz.png" class="card-img-top" />
-                                
-                                <h5 class="card-title text-black-50 healthz-checking"><i class="fas fa-sync-alt"></i> Checking</h5>
-                                <h5 class="card-title text-black-50 healthz-none d-none"><i class="fas fa-circle-notch"></i> N/A</h5>
-                                <h5 class="card-title text-success healthz-healthy d-none"><i class="fas fa-check-circle"></i> Healthy</h5>
-                                <h5 class="card-title text-danger healthz-unhealthy d-none"><i class="fas fa-times-circle"></i> Unhealthy</h5>
-                            </div>
-                        </div>
-                    </a>
+            </div>
+            <div class="col-md-6 order-md-1">
+                <h5 class="mb-3">Exceptions</h5>
+                <div class="card">
+                    <table class="table anim" id="exceptions">
+                        <tbody>
+                            @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
+                            {
+                            <tr class="in">
+                                <td>
+                                    <div>
+                                        <b>@ex.Type</b><br />@ex.Message<br />
+                                        <p class="d-none card-subtitle text-muted text-truncate">@ex.StackTrace.Replace("\r\n", "<br />")</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="d-none col-md-4 order-md-2 mb-4">
-                <h4 class="mb-3">Server</h4>
-                <div class="card">
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <small class="text-muted">Server</small>
-                                <h6 class="my-0">@Environment.MachineName</h6>
-                            </div>
-                            <span class="text-muted"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <small class="text-muted">OS</small>
-                                <h6 class="my-0">@Environment.OSVersion</h6>
-                            </div>
-                            <span class="text-muted"></span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div class="container pl-0 pr-0">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <small class="text-muted">Cores</small>
-                                        <h6 class="my-0">@Environment.ProcessorCount</h6>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <small class="text-muted">Memory</small>
-                                        <h6 class="my-0">@(Environment.WorkingSet/1024/1024) MB</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <small class="text-muted">User</small>
-                                <h6 class="my-0">@Environment.UserDomainName\@Environment.UserName</h6>
-                            </div>
-                            <span class="text-muted"></span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-7 order-md-1">
-                <h4 class="mb-3">Requests</h4>
-                <div class="card">
-                        <table class="table anim" id="requests">
-                            <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Code</th>
-                                    <th scope="col">Method</th>
-                                    <th scope="col">Path</th>
-                                    <th scope="col">Duration</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
-                                {
-                                    <tr class="in" id="@request.Id">
-                                        <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
-                                        <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
-                                        <td><div>@request.Method</div></td>
-                                        <td><div>@request.Path</div></td>
-                                        <td><div>@request.Duration ms</div></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                </div>
-            </div>
-            <div class="col-md-5 order-md-1">
-                <h4 class="mb-3">Exceptions</h4>
-                <div class="card">
-                        <table class="table anim" id="exceptions">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Message</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
-                                {
-                                    <tr class="in" data-toggle="tooltip" data-placement="bottom" title="@ex.StackTrace">
-                                        <td><div>@ex.Type</div></td>
-                                        <td><div>@ex.Message</div></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                </div>
-            </div>
-        </div>
-</div>
 
     <script type="text/javascript">
 
@@ -238,13 +209,18 @@
             }
             else {
                 if (Http.status.toString()[0] == '4') {
-                    document.getElementsByClassName('healthz-none')[0].classList.remove("d-none");
+                    document.getElementsByClassName('healthz-none')[0].classList.add("d-none");
                 }
                 else {
                     document.getElementsByClassName('healthz-unhealthy')[0].classList.remove("d-none");
                 }
             }
         }
+
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+            $('[data-toggle="tooltip"]').tooltip();
+        })
 
     </script>
 

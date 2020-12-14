@@ -37,11 +37,7 @@ connection.on("ExceptionAdded", function (ex) {
     var tbody = document.getElementById('exceptions').getElementsByTagName('tbody')[0];
     var row = tbody.insertRow(0);
     
-    //row.outerHTML = '<tr data-toggle="tooltip" data-placement="bottom" title="' + ex.stackTrace + '">' +
-      
-    row.insertCell().innerHTML = '<div>' + ex.type + '</div>';
-    row.insertCell().innerHTML = '<div>' + ex.message + '</div>';
-    //row.attributes.title = ex.stackTrace;
+    row.insertCell().innerHTML = '<div><b>' + ex.type + '</b><br />' + ex.message + '<br /><p class="d-none card-subtitle text-muted text-truncate">' + ex.stackTrace.replace(/\r\n/g, '<br />') + '</p></div>';
 
     setTimeout(function () {
         row.className = "in";
