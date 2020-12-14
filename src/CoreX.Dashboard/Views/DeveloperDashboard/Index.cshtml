@@ -102,6 +102,10 @@
             /* If max-width does not work, try using width instead */
             width: 500px;
         }
+
+        .card-table{
+            border-top:0;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -143,10 +147,17 @@
         </div>
     </nav>
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6 order-md-1">
-                <h5 class="mb-3">Requests</h5>
-                <div class="card">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="requests-tab" data-toggle="tab" href="#requests-div" role="tab" aria-controls="requests-div" aria-selected="true">Requests <span class="requests-badge badge badge-secondary">@Model.Requests.Count</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="errors-tab" data-toggle="tab" href="#errors-div" role="tab" aria-controls="errors-div" aria-selected="false">Errors <span class="errors-badge badge badge-danger">@Model.Exceptions.Count</span></a>
+                </li>
+            </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="requests-div" role="tabpanel" aria-labelledby="requests-tab">
+                <div class="card card-table">
                     <table class="table anim" id="requests">
                         <thead>
                             <tr>
@@ -160,21 +171,20 @@
                         <tbody>
                             @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
                             {
-                                <tr class="in" id="@request.Id">
-                                    <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
-                                    <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
-                                    <td><div>@request.Method</div></td>
-                                    <td><div>@request.Path</div></td>
-                                    <td><div>@request.Duration ms</div></td>
-                                </tr>
+                            <tr class="in" id="@request.Id">
+                                <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
+                                <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
+                                <td><div>@request.Method</div></td>
+                                <td><div>@request.Path</div></td>
+                                <td><div>@request.Duration ms</div></td>
+                            </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="col-md-6 order-md-1">
-                <h5 class="mb-3">Exceptions</h5>
-                <div class="card">
+            <div class="tab-pane fade" id="errors-div" role="tabpanel" aria-labelledby="errors-tab">
+                <div class="card card-table">
                     <table class="table anim" id="exceptions">
                         <tbody>
                             @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))

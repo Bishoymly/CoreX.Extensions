@@ -13,6 +13,13 @@ connection.on("RequestStarted", function (request) {
     row.insertCell().innerHTML = '<div>' + request.path + '</div>';
     row.insertCell().innerHTML = '<div></div>';
 
+    var badges = document.getElementsByClassName('requests-badge');
+    for (var i = 0; i < badges.length; i++) {
+        var count = parseInt(badges[i].innerHTML);
+        count++;
+        badges[i].innerHTML = count.toString();
+    }
+
     setTimeout(function () {
         row.className = "in";
     }, 0);
@@ -38,6 +45,13 @@ connection.on("ExceptionAdded", function (ex) {
     var row = tbody.insertRow(0);
     
     row.insertCell().innerHTML = '<div><b>' + ex.type + '</b><br />' + ex.message + '<br /><p class="d-none card-subtitle text-muted text-truncate">' + ex.stackTrace.replace(/\r\n/g, '<br />') + '</p></div>';
+
+    var badges = document.getElementsByClassName('errors-badge');
+    for (var i = 0; i < badges.length; i++) {
+        var count = parseInt(badges[i].innerHTML);
+        count++;
+        badges[i].innerHTML = count.toString();
+    }
 
     setTimeout(function () {
         row.className = "in";
