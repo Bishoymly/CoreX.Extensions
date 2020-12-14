@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CoreX.Extensions.Metrics.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -28,9 +29,16 @@ namespace CoreX.Extensions.Metrics
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (exception != null && _contextAccessor != null && _contextAccessor.HttpContext != null)
+            if (_contextAccessor != null && _contextAccessor.HttpContext != null)
             {
-                _metrics.AddException(_contextAccessor.HttpContext, exception);
+                if (exception != null)
+                {
+                    _metrics.AddException(new MetricsException(exception, _contextAccessor.HttpContext));
+                }
+                else if(logLevel == LogLevel.Error)
+                {
+                    _metrics.AddException(new MetricsException(formatter(state, exception), _contextAccessor.HttpContext));
+                }
             }
         }
     }

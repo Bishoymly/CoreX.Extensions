@@ -13,7 +13,7 @@ namespace CoreX.Extensions.Metrics
 
         Request BeginRequest(HttpContext context);
         Request EndRequest(HttpContext context, TimeSpan elapsed);
-        MetricsException AddException(HttpContext context, Exception ex);
+        MetricsException AddException(MetricsException ex);
 
         event EventHandler<RequestEventArgs> RequestStarted;
         event EventHandler<RequestEventArgs> RequestEnded;

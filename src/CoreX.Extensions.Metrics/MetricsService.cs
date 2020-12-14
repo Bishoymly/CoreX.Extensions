@@ -20,13 +20,11 @@ namespace CoreX.Extensions.Metrics
         public event EventHandler<RequestEventArgs> RequestEnded;
         public event EventHandler<ExceptionEventArgs> ExceptionAdded;
 
-        public MetricsException AddException(HttpContext context, Exception ex)
-        {
-            var e = new MetricsException(ex);
-            
-            Exceptions.Add(e);
-            ExceptionAdded?.Invoke(this, new ExceptionEventArgs { Exception = e });
-            return e;
+        public MetricsException AddException(MetricsException exception)
+        {            
+            Exceptions.Add(exception);
+            ExceptionAdded?.Invoke(this, new ExceptionEventArgs { Exception = exception });
+            return exception;
         }
 
         public Request BeginRequest(HttpContext context)

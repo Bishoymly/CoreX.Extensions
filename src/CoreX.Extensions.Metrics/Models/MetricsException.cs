@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,12 +11,14 @@ namespace CoreX.Extensions.Metrics.Models
         public string Type { get; set; }
         public string Message { get; set; }
         public string StackTrace { get; set; }
+        public string Path { get; set; }
+        public string RequestId { get; set; }
 
         public MetricsException()
         {
         }
 
-        public MetricsException(Exception ex)
+        public MetricsException(Exception ex, HttpContext context)
         {
             // take the most inner exception
             while (ex.InnerException != null)
@@ -27,6 +30,26 @@ namespace CoreX.Extensions.Metrics.Models
             Type = ex.GetType().Name;
             Message = ex.Message;
             StackTrace = ex.StackTrace;
+
+            if(context != null && context.Request != null)
+            {
+                Path = context.Request.Path;
+                RequestId = context.TraceIdentifier;
+            }
+        }
+
+        public MetricsException(string error, HttpContext context)
+        {
+            Date = DateTime.Now;
+            Type = "Error";
+            Message = error;
+            StackTrace = "";
+            
+            if (context != null && context.Request != null)
+            {
+                Path = context.Request.Path;
+                RequestId = context.TraceIdentifier;
+            }
         }
 
         public override bool Equals(object obj)
