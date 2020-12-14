@@ -44,4 +44,4 @@ Extension methods that adds **ToStringContent** and **ToHtml** to the following 
 * HttpRequestMessage
 * HttpResponseMessage
 
-Which are useful to log full request/reponse contents in logs that appear in console or browser.
+Which are useful to log full request/response contents in logs that appear in console or browser.

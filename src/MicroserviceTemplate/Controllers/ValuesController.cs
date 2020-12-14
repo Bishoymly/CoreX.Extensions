@@ -26,7 +26,7 @@ namespace MicroserviceTemplate.Controllers
         public ActionResult<IEnumerable<string>> Get()
         {
             var client = _factory.CreateClient();
-            var result = client.GetAsync("https://www.google.com").Result;
+            var result = client.GetAsync("https://www.abc.com/abc").Result;
             result.EnsureSuccessStatusCode();
 
             return new string[] { "value1", "value2" };
