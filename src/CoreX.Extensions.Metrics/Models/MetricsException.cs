@@ -28,8 +28,8 @@ namespace CoreX.Extensions.Metrics.Models
 
             Date = DateTime.Now;
             Type = ex.GetType().Name;
-            Message = ex.Message;
-            StackTrace = ex.StackTrace;
+            Message = ToHtml(ex.Message);
+            StackTrace = ToHtml(ex.StackTrace);
 
             if(context != null && context.Request != null)
             {
@@ -42,7 +42,7 @@ namespace CoreX.Extensions.Metrics.Models
         {
             Date = DateTime.Now;
             Type = "Error";
-            Message = error;
+            Message = ToHtml(error);
             StackTrace = "";
             
             if (context != null && context.Request != null)
@@ -69,6 +69,11 @@ namespace CoreX.Extensions.Metrics.Models
         public override int GetHashCode()
         {
             return (Type + StackTrace).GetHashCode();
+        }
+
+        protected string ToHtml(string body)
+        {
+            return body.Replace("\r\n", "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;");
         }
     }
 }

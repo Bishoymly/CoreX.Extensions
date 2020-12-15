@@ -44,7 +44,10 @@ connection.on("ExceptionAdded", function (ex) {
     var tbody = document.getElementById('exceptions').getElementsByTagName('tbody')[0];
     var row = tbody.insertRow(0);
     
-    row.insertCell().innerHTML = '<div><b>' + ex.type + '</b><br />' + ex.message + '<br /><p class="d-none card-subtitle text-muted text-truncate">' + ex.stackTrace.replace(/\r\n/g, '<br />') + '</p></div>';
+    row.insertCell().innerHTML = '<div>' + ex.path + '</div>';
+    row.insertCell().innerHTML = '<div>' + ex.type + '</div>';
+    row.insertCell().innerHTML = '<div>' + ex.message + '</div>';
+    row.insertCell().innerHTML = '<div class="code">' + ex.stackTrace + '</div>';
 
     var badges = document.getElementsByClassName('errors-badge');
     for (var i = 0; i < badges.length; i++) {

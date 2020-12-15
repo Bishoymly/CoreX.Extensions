@@ -106,6 +106,13 @@
         .card-table{
             border-top:0;
         }
+
+        .code {
+            line-height: 14px;
+            font-size: 12px;
+            font-family: 'Lucida Console', Monaco, monospace;
+            color: #6c757d !important;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -186,17 +193,23 @@
             <div class="tab-pane fade" id="errors-div" role="tabpanel" aria-labelledby="errors-tab">
                 <div class="card card-table">
                     <table class="table anim" id="exceptions">
+                        <thead>
+                            <tr>
+                                <th scope="col">Path</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Stack Trace</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
                             {
-                            <tr class="in">
-                                <td>
-                                    <div>
-                                        <b>@ex.Type</b><br />@ex.Message<br />
-                                        <p class="d-none card-subtitle text-muted text-truncate">@ex.StackTrace.Replace("\r\n", "<br />")</p>
-                                    </div>
-                                </td>
-                            </tr>
+                                <tr class="in">
+                                    <td><div>@ex.Path</div></td>
+                                    <td><div>@ex.Type</div></td>
+                                    <td><div>@ex.Message</div></td>
+                                    <td><div class="code">@ex.StackTrace</div></td>
+                                </tr>
                             }
                         </tbody>
                     </table>
