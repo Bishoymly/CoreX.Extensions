@@ -113,6 +113,10 @@
             font-family: 'Lucida Console', Monaco, monospace;
             color: #6c757d !important;
         }
+
+        .number{
+            text-align:right;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -172,7 +176,7 @@
                                 <th scope="col">Code</th>
                                 <th scope="col">Method</th>
                                 <th scope="col">Path</th>
-                                <th scope="col">Duration</th>
+                                <th scope="col" class="number">Duration</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -183,7 +187,7 @@
                                 <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
                                 <td><div>@request.Method</div></td>
                                 <td><div>@request.Path</div></td>
-                                <td><div>@request.Duration ms</div></td>
+                                <td><div class="number">@request.Duration.ToString("#,###,##0") ms</div></td>
                             </tr>
                             }
                         </tbody>

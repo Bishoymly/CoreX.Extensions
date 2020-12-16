@@ -34,7 +34,7 @@ connection.on("RequestEnded", function (request) {
             cells[0].className = getColor(request.status);
             cells[1].className = getColor(request.status);
             cells[1].innerHTML = '<div>' + request.status + '</div>';
-            cells[4].innerHTML = '<div>' + request.duration + ' ms</div>';
+            cells[4].innerHTML = '<div class="number">' + request.duration.toLocaleString() + ' ms</div>';
         }
     }
 });
