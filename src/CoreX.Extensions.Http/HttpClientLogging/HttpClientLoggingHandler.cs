@@ -27,14 +27,21 @@ namespace CoreX.Extensions.Http.HttpClientLogging
 
             if (_options.CurrentValue.Enabled)
             {
-                logger.LogInformation(request.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body, _options.CurrentValue.Html));
+                logger.LogInformation(request.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body));
             }
 
             HttpResponseMessage response = await base.SendAsync(request, cancellationToken);
 
             if (_options.CurrentValue.Enabled)
             {
-                logger.LogInformation(response.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body, _options.CurrentValue.Html));
+                if (response.IsSuccessStatusCode)
+                {
+                    logger.LogInformation(response.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body));
+                }
+                else
+                {
+                    logger.LogError(response.ToStringContent(_options.CurrentValue.Headers, _options.CurrentValue.Body));
+                }
             }
 
             return response;

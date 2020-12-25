@@ -1,17 +1,18 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.Http
 {
     public static class HttpExtensions
     {
-        public static string ToHtml(this HttpRequest request, bool showHeaders = true, bool showBody = true)
+        public async static Task<string> ToHtml(this HttpRequest request, bool showHeaders = true, bool showBody = true)
         {
-            return request.ToStringContent(showHeaders, showBody, true);
+            return await request.ToStringContent(showHeaders, showBody, true);
         }
 
-        public static string ToStringContent(this HttpRequest request, bool showHeaders = true, bool showBody = true, bool html = false)
+        public async static Task<string> ToStringContent(this HttpRequest request, bool showHeaders = true, bool showBody = true, bool html = false)
         {
             var builder = new StringBuilder();
             builder.Append($"{IsHtml("<i>", html)}Request:{IsHtml("</i>", html)}");
@@ -33,7 +34,7 @@ namespace Microsoft.AspNetCore.Http
                 builder.Append($"{Environment.NewLine}{ IsHtml("<span style='opacity:0.5;'>", html)}");
                 using (StreamReader reader = new StreamReader(request.Body))
                 {
-                    builder.Append(reader.ReadToEnd());
+                    builder.Append(await reader.ReadToEndAsync());
                 }
                 builder.Append(IsHtml("</span>", html));
             }

@@ -41,8 +41,10 @@ namespace MicroserviceTemplate
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllersWithViews();
 
+            services.AddMetrics();
+         
             // Register Feature Management
             services.AddFeatureManagement();
 
@@ -78,6 +80,9 @@ namespace MicroserviceTemplate
             // Register HttpLog middleware for "/log"
             services.AddHttpLog(Configuration);
 
+            // Register Developer Dashboard middleware
+            services.AddDeveloperDashboard();
+
             // Register Health checks
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], name: "DefaultConnection");
@@ -109,6 +114,11 @@ namespace MicroserviceTemplate
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env, IFeatureManager featureManager)
         {
             app.UseCorrelationId();
+
+            if (await featureManager.IsEnabledAsync(Features.Metrics))
+            {
+                app.UseMetrics();
+            }
 
             if (await featureManager.IsEnabledAsync(Features.ForwardedHeaders))
             {
@@ -152,9 +162,6 @@ namespace MicroserviceTemplate
 
             if (await featureManager.IsEnabledAsync(Features.Swagger))
             {
-                // Set Swagger description to match enabled features
-                this.OpenApiInfo.Description = await GetSwaggerHomepage(featureManager);
-
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
@@ -162,14 +169,17 @@ namespace MicroserviceTemplate
                 // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MicroserviceTemplate V1");
-                    c.RoutePrefix = string.Empty;
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MicroserviceTemplate");
                 });
             }
 
             app.UseRouting();
-
             app.UseAuthorization();
+
+            if (await featureManager.IsEnabledAsync(Features.DeveloperDashboard))
+            {
+                app.UseDeveloperDashboard(env);
+            }
 
             app.UseEndpoints(endpoints =>
             {
@@ -181,8 +191,6 @@ namespace MicroserviceTemplate
         public async Task<string> GetSwaggerHomepage(IFeatureManager featureManager)
         {
             var description = new StringBuilder();
-            if (await featureManager.IsEnabledAsync(Features.Metrics))
-                description.Append(HomeGenerator.BasicHtml());
             description.Append("<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>");
             description.Append("<ul>");
             if (await featureManager.IsEnabledAsync(Features.HttpLogger))

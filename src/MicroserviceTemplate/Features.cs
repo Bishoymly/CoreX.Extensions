@@ -13,5 +13,6 @@ namespace MicroserviceTemplate
         public const string Swagger = "Swagger";
         public const string ForwardedHeaders = "ForwardedHeaders";
         public const string Metrics = "Metrics";
+        public const string DeveloperDashboard = "DeveloperDashboard";
     }
 }

@@ -1,0 +1,289 @@
+﻿@model CoreX.Extensions.Metrics.IMetricsService
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="generator" content="CoreX.Extension.Metrics">
+    <title>@(System.AppDomain.CurrentDomain.FriendlyName) - CoreX Developer Dashboard</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/e80d3696e6.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="/devdashcontent/js/signalr.min.js"></script>
+    <script src="/devdashcontent/js/realtime.js"></script>
+    <link rel="apple-touch-icon" sizes="57x57" href="/devdashcontent/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/devdashcontent/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/devdashcontent/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/devdashcontent/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/devdashcontent/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/devdashcontent/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/devdashcontent/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/devdashcontent/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/devdashcontent/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/devdashcontent/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/devdashcontent/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/devdashcontent/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/devdashcontent/icon/favicon-16x16.png">
+    <link rel="manifest" href="/devdashcontent/icon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/devdashcontent/icon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .text-success {
+            color: #12ca93 !important
+        }
+
+        .badge-success {
+            background-color: #12ca93 !important
+        }
+
+        .text-warning {
+            color: #ecb22f !important
+        }
+
+        .badge-warning {
+            background-color: #ecb22f !important
+        }
+
+        .text-danger {
+            color: #e95f6a !important
+        }
+
+        .badge-danger {
+            background-color: #e95f6a !important
+        }
+
+        .table.anim td {
+            padding: 0;
+        }
+
+        .table.anim tr td div {
+            padding: 0 0.8rem;
+            box-sizing: border-box;
+            max-height: 0px;
+            opacity: 0;
+            transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
+        }
+
+        .table.anim tr.in td div {
+            padding: 0.5rem 0.8rem;
+            max-height: none;
+            opacity: 1;
+            transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
+        }
+
+        .table th {
+            border-top: 0;
+        }
+
+        .nounderline {
+            text-decoration: none !important;
+            color: #000;
+        }
+
+        .card-title {
+            margin: .75rem -.2rem;
+        }
+
+        .logo {
+            width: 76px;
+        }
+
+        .popover-body {
+            padding: 0;
+        }
+
+        .navbar-nav .nav-link {
+            padding-left: 1rem !important;
+        }
+
+        .tooltip-inner {
+            max-width: 500px;
+            /* If max-width does not work, try using width instead */
+            width: 500px;
+        }
+
+        .card-table{
+            border-top:0;
+        }
+
+        .code {
+            line-height: 14px;
+            font-size: 12px;
+            font-family: 'Lucida Console', Monaco, monospace;
+            color: #6c757d !important;
+        }
+
+        .number{
+            text-align:right;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
+        <a class="navbar-brand" href="#">
+            <img src="/devdashcontent/images/corex.png" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+            @(System.AppDomain.CurrentDomain.FriendlyName)
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Realtime</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Performance</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Failures</a>
+                </li>
+            </ul>
+            <div class="navbar-nav">
+                <a href="/swagger" target="_blank" class="nav-link">
+                    <img src="/devdashcontent/images/swagger.png" height="19" /> Swagger
+                </a>
+                <a href="/log" target="_blank" class="nav-link">
+                    <i class="fas fa-align-left"></i> Logs
+                </a>
+                <a href="/healthz" target="_blank" class="nav-link healthz-none">
+                    <span class="text-white-50 healthz-checking"><i class="fas fa-sync-alt"></i></span>
+                    <!--<span class="card-title text-white-50 healthz-none d-none"><i class="fas fa-circle-notch"></i> N/A</span>-->
+                    <span class="text-success healthz-healthy d-none"><i class="fas fa-check-circle"></i> Healthy</span>
+                    <span class="text-danger healthz-unhealthy d-none"><i class="fas fa-times-circle"></i> Unhealthy</span>
+                </a>
+                <a tabindex="0" href="#" class="nav-link" data-toggle="popover" data-placement="bottom" data-html="true" title="Server Info" data-trigger="focus" data-content="<ul class='list-group list-group-flush mb-3'><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>Server</small><h6 class='my-0'>@Environment.MachineName</h6></div><span class='text-muted'></span></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>OS</small><h6 class='my-0'>@Environment.OSVersion</h6></div><span class='text-muted'></span></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div class='container pl-0 pr-0'><div class='row'><div class='col-md-6'><small class='text-muted'>Cores</small><h6 class='my-0'>@Environment.ProcessorCount</h6></div><div class='col-md-6'><small class='text-muted'>Memory</small><h6 class='my-0'>@(Environment.WorkingSet/1024/1024) MB</h6></div></div></div></li><li class='list-group-item d-flex justify-content-between lh-condensed'><div><small class='text-muted'>User</small><h6 class='my-0'>@Environment.UserDomainName\@Environment.UserName</h6></div><span class='text-muted'></span></li></ul>">@Environment.MachineName</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="requests-tab" data-toggle="tab" href="#requests-div" role="tab" aria-controls="requests-div" aria-selected="true">Requests <span class="requests-badge badge badge-secondary">@Model.Requests.Count</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="errors-tab" data-toggle="tab" href="#errors-div" role="tab" aria-controls="errors-div" aria-selected="false">Errors <span class="errors-badge badge badge-danger">@Model.Exceptions.Count</span></a>
+                </li>
+            </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="requests-div" role="tabpanel" aria-labelledby="requests-tab">
+                <div class="card card-table">
+                    <table class="table anim" id="requests">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Method</th>
+                                <th scope="col">Path</th>
+                                <th scope="col" class="number">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
+                            {
+                            <tr class="in" id="@request.Id">
+                                <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
+                                <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
+                                <td><div>@request.Method</div></td>
+                                <td><div>@request.Path</div></td>
+                                <td><div class="number">@request.Duration.ToString("#,###,##0") ms</div></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="errors-div" role="tabpanel" aria-labelledby="errors-tab">
+                <div class="card card-table">
+                    <table class="table anim" id="exceptions">
+                        <thead>
+                            <tr>
+                                <th scope="col">Path</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Stack Trace</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
+                            {
+                                <tr class="in">
+                                    <td><div>@ex.Path</div></td>
+                                    <td><div>@ex.Type</div></td>
+                                    <td><div>@ex.Message</div></td>
+                                    <td><div class="code">@Html.Raw(ex.StackTrace)</div></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        const Http = new XMLHttpRequest();
+        const url = '/healthz';
+        Http.open("GET", url);
+        Http.send();
+
+        Http.onreadystatechange = (e) => {
+            document.getElementsByClassName('healthz-checking')[0].style.display = 'none';
+            if (Http.status.toString()[0] == '2') {
+                document.getElementsByClassName('healthz-healthy')[0].classList.remove("d-none");
+            }
+            else {
+                if (Http.status.toString()[0] == '4') {
+                    document.getElementsByClassName('healthz-none')[0].classList.add("d-none");
+                }
+                else {
+                    document.getElementsByClassName('healthz-unhealthy')[0].classList.remove("d-none");
+                }
+            }
+        }
+
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+
+    </script>
+
+</body>
+</html>
+
+@{ 
+    string GetColorClass(string status)
+    {
+        if (string.IsNullOrEmpty(status))
+            return "";
+
+        if(status.StartsWith('2'))
+            return "text-success";
+
+        if (status.StartsWith('3'))
+            return "text-success";
+
+        if (status.StartsWith('4'))
+            return "text-warning";
+
+        if (status.StartsWith('5'))
+            return "text-danger";
+
+        return "";
+    }
+}
