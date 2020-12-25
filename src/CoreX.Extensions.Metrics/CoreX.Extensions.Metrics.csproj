@@ -4,9 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.2-prerelease</Version>
     <Authors>Bishoy Labib</Authors>
-    <Description>This is still very early draft of a middleware that keeps track of API statistics like response time and availability</Description>
+    <Company>Bishoy Labib</Company>
+    <Version>1.1.0</Version>
+    <Description>Middleware that keeps track of API statistics like response codes and duration</Description>
     <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Extensions.Metrics</RepositoryUrl>
   </PropertyGroup>

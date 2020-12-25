@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <PackageType>Template</PackageType>
-    <PackageVersion>0.3.1-prerelease</PackageVersion>
+    <PackageVersion>1.1.0</PackageVersion>
     <PackageId>CoreX.Microservices.Templates</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>Microservices Templates</Title>
     <Authors>Bishoy Labib</Authors>
     <Description>Templates to provide ASP.NET Core Web API that is optimized for Microservices.</Description>

@@ -2,8 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Bishoy Labib</Authors>
+    <Company>Bishoy Labib</Company>
+    <Version>1.1.0</Version>
+    <Description>Extensions that adds a Developer Dashboard that show API metrics and logs</Description>
+    <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Dashboard</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

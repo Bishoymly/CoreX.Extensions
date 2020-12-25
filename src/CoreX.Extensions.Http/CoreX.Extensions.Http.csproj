@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-prerelease</Version>
     <Authors>Bishoy Labib</Authors>
+    <Company>Bishoy Labib</Company>
+    <Version>1.1.0</Version>
     <Description>Extensions that enhance HttpClient and Http Logging</Description>
     <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Extensions.Http</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

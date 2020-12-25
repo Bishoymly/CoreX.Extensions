@@ -114,7 +114,11 @@ namespace MicroserviceTemplate
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env, IFeatureManager featureManager)
         {
             app.UseCorrelationId();
-            app.UseMetrics();
+
+            if (await featureManager.IsEnabledAsync(Features.Metrics))
+            {
+                app.UseMetrics();
+            }
 
             if (await featureManager.IsEnabledAsync(Features.ForwardedHeaders))
             {
@@ -172,7 +176,10 @@ namespace MicroserviceTemplate
             app.UseRouting();
             app.UseAuthorization();
 
-            app.UseDeveloperDashboard(env);
+            if (await featureManager.IsEnabledAsync(Features.DeveloperDashboard))
+            {
+                app.UseDeveloperDashboard(env);
+            }
 
             app.UseEndpoints(endpoints =>
             {
@@ -184,8 +191,6 @@ namespace MicroserviceTemplate
         public async Task<string> GetSwaggerHomepage(IFeatureManager featureManager)
         {
             var description = new StringBuilder();
-            if (await featureManager.IsEnabledAsync(Features.Metrics))
-                description.Append(HomeGenerator.BasicHtml());
             description.Append("<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>");
             description.Append("<ul>");
             if (await featureManager.IsEnabledAsync(Features.HttpLogger))
