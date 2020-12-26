@@ -7,7 +7,6 @@ using CoreX.Extensions.Metrics;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 
-using HealthChecks.UI.Client;
 using MicroserviceTemplate.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -87,12 +86,6 @@ namespace MicroserviceTemplate
             services.AddHealthChecks()
                 .AddSqlServer(Configuration["ConnectionStrings:DefaultConnection"], name: "DefaultConnection");
 
-            if (Configuration["FeatureManagement:HealthUI"] == "True")
-            {
-                // Register HealthChecks UI
-                services.AddHealthChecksUI();
-            }
-
             // Register Application Insights
             services.AddApplicationInsightsTelemetry();
 
@@ -117,6 +110,7 @@ namespace MicroserviceTemplate
 
             if (await featureManager.IsEnabledAsync(Features.Metrics))
             {
+                // Enables API Metrics Calculation in Memory
                 app.UseMetrics();
             }
 
@@ -135,16 +129,7 @@ namespace MicroserviceTemplate
             if (await featureManager.IsEnabledAsync(Features.Healthz))
             {
                 // Enable middleware for "/healthz"
-                app.UseHealthChecks("/healthz", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
-            }
-
-            if (await featureManager.IsEnabledAsync(Features.HealthUI))
-            {
-                app.UseHealthChecksUI();
+                app.UseHealthChecks("/healthz");
             }
 
             // Enable developer exception page for debugging
@@ -178,6 +163,7 @@ namespace MicroserviceTemplate
 
             if (await featureManager.IsEnabledAsync(Features.DeveloperDashboard))
             {
+                // Enable Developer Dashboard
                 app.UseDeveloperDashboard(env);
             }
 
@@ -185,23 +171,6 @@ namespace MicroserviceTemplate
             {
                 endpoints.MapControllers();
             });
-        }
-
-        // This method is used to generate the description in the swagger UI page, according to the available features
-        public async Task<string> GetSwaggerHomepage(IFeatureManager featureManager)
-        {
-            var description = new StringBuilder();
-            description.Append("<p>This template provides loads of developer friendly features that makes dotnet core ready for microservices and containers scenarios.</p>");
-            description.Append("<ul>");
-            if (await featureManager.IsEnabledAsync(Features.HttpLogger))
-                description.Append("<li><a target='_blank' href='/log?level=all'>/log</a> monitor your beautiful logs from the comfort of your browser </li>");
-            if (await featureManager.IsEnabledAsync(Features.Healthz))
-                description.Append("<li><a target='_blank' href='/healthz'>/healthz</a> url to monitor your application health status </li>");
-            if (await featureManager.IsEnabledAsync(Features.HealthUI))
-                description.Append("<li><a target='_blank' href='/healthchecks-ui'>/healthchecks-ui</a> UI to monitor your application health status </li>");
-            description.Append("</ul>");
-
-            return description.ToString();
         }
     }
 }
