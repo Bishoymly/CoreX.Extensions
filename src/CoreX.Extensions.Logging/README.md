@@ -1,17 +1,34 @@
+[![NuGet version (CoreX.Extensions.Logging)](https://img.shields.io/nuget/v/CoreX.Extensions.Logging.svg?style=flat-square)](https://www.nuget.org/packages/CoreX.Extensions.Logging/)
+
 # CoreX.Extensions.Logging
-A suitable logging for microservices scenarios, where you need to track logs without sacrificing performance or storage. 
+A simple, realtime display of logs for microservices, where you need to track logs without sacrificing performance or storage. No memory/storage/database required. Just open your browser "/log" to display realtime logs.
+
+![image.png](../../images/Log.PNG)
 
 ## Getting started
+
+Add the nuget package: [![NuGet version (CoreX.Extensions.Logging)](https://img.shields.io/nuget/v/CoreX.Extensions.Logging.svg?style=flat-square)](https://www.nuget.org/packages/CoreX.Extensions.Logging/)
+
 In startup.cs:
 ```
-// ConfigureServices
-services.AddHttpLog(Configuration);
-
-// Configure, right before UseMVC
-app.UseHttpLog();
-app.UseMvc();
+public void ConfigureServices(IServiceCollection services)
+{
+  services.AddHttpLog(Configuration);
+}
 ```
+```
+public async void Configure(IApplicationBuilder app)
+{
+  ...
+  
+  app.UseHttpLog();
+  app.UseEndpoints(endpoints =>
+  {
+      endpoints.MapControllers();
+  });
+}
 
+```
 Then browse your app /log to view a realtime console view of your application!
 
 ## Configurations 
