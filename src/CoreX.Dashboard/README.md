@@ -22,12 +22,10 @@ public void ConfigureServices(IServiceCollection services)
 ```
 public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-  // Enables API Metrics Calculation in Memory (begining of Configure)
   app.UseMetrics();
 
   ...
 
-  // Enable Developer Dashboard (end of Configure, right before app.UseEndpoints)
   app.UseDeveloperDashboard(env);
   
   app.UseEndpoints(endpoints =>
