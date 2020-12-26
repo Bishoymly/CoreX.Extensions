@@ -1,5 +1,6 @@
 # CoreX.Extensions
 This repo contains multiple extensions libraries (nuget packages):
+* [CoreX.Dashboard](/src/CoreX.Dashboard) Developer Dashboard for API Metrics and Logs
 * [CoreX.Extensions.Logging](/src/CoreX.Extensions.Logging) Extensions for providing quick web based logging page
 * [CoreX.Extensions.Http](/src/CoreX.Extensions.Http) Extensions that facilitate logging for common http requests and exceptions
 * [CoreX.Extensions.Metrics](/src/CoreX.Extensions.Metrics) Extensions to track stats for API response time and availability
@@ -8,7 +9,7 @@ This repo contains multiple extensions libraries (nuget packages):
 ## Getting started
 The fastest way is to install the Microservice project template using dotnet new command:
 ```
-dotnet new -i CoreX.Microservices.Templates::0.3.1-prerelease
+dotnet new -i CoreX.Microservices.Templates
 ```
 
 Then create a directory with the name of your project:
