@@ -3,9 +3,9 @@
 # CoreX Developer Dashboard
 Add a developer dashboard to your .NET Web API that shows metrics and logs to easily monitor, debug, and troubleshoot issues with your API.
 
-![image.png](images/Requests.PNG)
+![image.png](../../images/Requests.PNG)
 
-![image.png](images/Errors.PNG)
+![image.png](../../images/Errors.PNG)
 
 ## Getting started
 
