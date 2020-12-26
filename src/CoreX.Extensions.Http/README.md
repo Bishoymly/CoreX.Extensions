@@ -1,4 +1,8 @@
-﻿# CoreX.Entensions.Http
+[![NuGet version (CoreX.Extensions.Http)](https://img.shields.io/nuget/v/CoreX.Extensions.Http.svg?style=flat-square)](https://www.nuget.org/packages/CoreX.Extensions.Http/)
+
+Article: https://medium.com/microservices-for-net-developers/making-http-easier-with-net-core-5d46dd805850
+
+# CoreX.Extensions.Http
 Common Http extensions for ASP.NET Core that provide features (in my opinion) that should have been default to dotnet.
 ## Features
 ### Better logging for BadRequests
