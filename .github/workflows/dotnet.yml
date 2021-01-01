@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Restore dependencies
-      run: dotnet restore src
+      run: dotnet restore src/CoreX.Extensions.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build src/CoreX.Extensions.sln --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test src/CoreX.Extensions.sln --no-build --verbosity normal
