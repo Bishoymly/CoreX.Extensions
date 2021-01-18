@@ -1,0 +1,98 @@
+body {
+    padding-top: 80px;
+}
+
+.text-success {
+    color: #12ca93 !important
+}
+
+.badge-success {
+    background-color: #12ca93 !important
+}
+
+.text-warning {
+    color: #ecb22f !important
+}
+
+.badge-warning {
+    background-color: #ecb22f !important
+}
+
+.text-danger {
+    color: #e95f6a !important
+}
+
+.badge-danger {
+    background-color: #e95f6a !important
+}
+
+.table.anim td {
+    padding: 0;
+}
+
+.table.anim tr td div {
+    padding: 0 0.8rem;
+    box-sizing: border-box;
+    max-height: 0px;
+    opacity: 0;
+    transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
+}
+
+.table.anim tr.in td div {
+    padding: 0.5rem 0.8rem;
+    max-height: none;
+    opacity: 1;
+    transition: max-height 0.5s, padding 0.5s, opacity 0.5s;
+}
+
+.table th {
+    border-top: 0;
+}
+
+.nounderline {
+    text-decoration: none !important;
+    color: #000;
+}
+
+.card-title {
+    margin: .75rem -.2rem;
+}
+
+.logo {
+    width: 76px;
+}
+
+.popover-body {
+    padding: 0;
+}
+
+.navbar-nav .nav-link {
+    padding-left: 1rem !important;
+}
+
+.tooltip-inner {
+    max-width: 500px;
+    /* If max-width does not work, try using width instead */
+    width: 500px;
+}
+
+.card-table {
+    border-top: 0;
+}
+
+.code {
+    line-height: 14px;
+    font-size: 12px;
+    font-family: 'Lucida Console', Monaco, monospace;
+    color: #6c757d !important;
+}
+
+.number {
+    text-align: right;
+}
+
+.log-frame{
+    border:0;
+    width:100%;
+    height:600px;
+}

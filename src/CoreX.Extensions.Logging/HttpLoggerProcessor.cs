@@ -41,7 +41,10 @@ namespace CoreX.Extensions.Logging
 
             // Start writer
             _writer = new StreamWriter(context.Response.Body);
-            WriteLineAsync("<header><style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style></header>");
+            WriteLineAsync("<header>" +
+                "<style>body{background:#000;color:#fff;line-height:14px;font-size:12px;font-family:'Lucida Console', Monaco, monospace}</style>" +
+                "</header><body>" +
+                "<script>var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;var observer = new MutationObserver(function (mutations, observer) { window.scrollTo(0, window.document.body.scrollHeight);});observer.observe(document, { subtree: true, attributes: true, childList: true, characterData: true});</script>");
             
             InitializeQuery(context.Request.Query);
         }
