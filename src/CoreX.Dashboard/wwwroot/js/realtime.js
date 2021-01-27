@@ -1,6 +1,6 @@
 "use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/devdash/realtime").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("devdash/realtime").build();
 
 connection.on("RequestStarted", function (request) {
     
