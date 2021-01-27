@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace CoreX.Extensions.Metrics
@@ -55,6 +56,24 @@ namespace CoreX.Extensions.Metrics
             }
 
             return request;
+        }
+
+        public List<RequestAggregate> GetTopRequests()
+        {
+            return Requests.Where(r => r.Status != null)
+                .GroupBy(r => new { r.Method, r.Path })
+                .OrderByDescending(r => r.Sum(s => s.Duration))
+                .Select(r => new RequestAggregate
+                {
+                    Method = r.Key.Method,
+                    Path = r.Key.Path,
+                    Count = r.Count(),
+                    DurationTotal = r.Sum(s=>s.Duration),
+                    DurationAvg = (int)r.Average(s => s.Duration),
+                    SuccessCount = r.Count(s=>s.HttpStatus == HttpStatus.Success),
+                    FailedCount = r.Count(s=>s.HttpStatus == HttpStatus.Error || s.HttpStatus == HttpStatus.Warning)
+                })
+                .ToList();
         }
     }
 }

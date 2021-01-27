@@ -8,13 +8,14 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Bishoy Labib</Authors>
     <Company>Bishoy Labib</Company>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Description>Extensions that adds a Developer Dashboard that show API metrics and logs</Description>
     <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Dashboard</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\css\main.css" />
     <Content Remove="wwwroot\icon\android-icon-144x144.png" />
     <Content Remove="wwwroot\icon\android-icon-192x192.png" />
     <Content Remove="wwwroot\icon\android-icon-36x36.png" />
@@ -51,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="wwwroot\css\main.css" />
     <EmbeddedResource Include="wwwroot\icon\android-icon-144x144.png" />
     <EmbeddedResource Include="wwwroot\icon\android-icon-192x192.png" />
     <EmbeddedResource Include="wwwroot\icon\android-icon-36x36.png" />

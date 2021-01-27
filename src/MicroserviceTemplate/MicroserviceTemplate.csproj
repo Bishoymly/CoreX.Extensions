@@ -9,9 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="3.2.0" />
-    <PackageReference Include="CoreX.Dashboard" Version="1.1.0" />
-    <PackageReference Include="CoreX.Extensions.Http" Version="1.1.0" />
-    <PackageReference Include="CoreX.Extensions.Logging" Version="1.1.0" />
     <PackageReference Include="CorrelationId" Version="3.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.16.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
@@ -20,6 +17,13 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreX.Dashboard\CoreX.Dashboard.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Http\CoreX.Extensions.Http.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Logging\CoreX.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\CoreX.Extensions.Metrics\CoreX.Extensions.Metrics.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

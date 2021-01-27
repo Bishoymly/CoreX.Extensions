@@ -1,6 +1,6 @@
 "use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/devdash/realtime").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("devdash/realtime").build();
 
 connection.on("RequestStarted", function (request) {
     
@@ -65,6 +65,9 @@ function getColor(status) {
     if (status.length === 0)
         return '';
 
+    if (status[0] === '1')
+        return 'text-success';
+
     if (status[0] === '2')
         return 'text-success';
 
@@ -85,3 +88,4 @@ connection.start().then(function () {
 }).catch(function (err) {
     return console.error(err.toString());
 });
+
