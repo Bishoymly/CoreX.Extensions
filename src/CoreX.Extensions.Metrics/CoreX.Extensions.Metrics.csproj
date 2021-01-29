@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Bishoy Labib</Authors>
     <Company>Bishoy Labib</Company>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <Description>Middleware that keeps track of API statistics like response codes and duration</Description>
     <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Extensions.Metrics</RepositoryUrl>
