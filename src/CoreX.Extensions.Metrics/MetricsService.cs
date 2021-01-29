@@ -30,6 +30,9 @@ namespace CoreX.Extensions.Metrics
 
         public Request BeginRequest(HttpContext context)
         {
+            if (!IsPathEnabled(context.Request.Path))
+                return null;
+
             var request = new Request
             {
                 Method = context.Request.Method,
@@ -38,7 +41,7 @@ namespace CoreX.Extensions.Metrics
                 User = context.User.Identity.Name,
                 Id = context.TraceIdentifier
             };
-            
+
             Requests.Add(request);
             RequestStarted?.Invoke(this, new RequestEventArgs { Request = request });
             return request;
@@ -46,6 +49,9 @@ namespace CoreX.Extensions.Metrics
 
         public Request EndRequest(HttpContext context, TimeSpan elapsed)
         {
+            if (!IsPathEnabled(context.Request.Path))
+                return null;
+
             var request = Requests.Find(r => r.Id == context.TraceIdentifier);
             if (request != null)
             {
@@ -74,6 +80,17 @@ namespace CoreX.Extensions.Metrics
                     FailedCount = r.Count(s=>s.HttpStatus == HttpStatus.Error || s.HttpStatus == HttpStatus.Warning)
                 })
                 .ToList();
+        }
+
+        protected bool IsPathEnabled(string path)
+        {
+            if (path.StartsWith("/devdash"))
+                return false;
+
+            if (path == "/" || path == "/log" || path == "/healthz")
+                return false;
+
+            return true;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         }
                     }
 
-                    builder.AppendLine(context.HttpContext.Request.ToHtml(showHeaders: false, showBody: true).Result);
+                    builder.AppendLine(context.HttpContext.Request.ToStringContent(showHeaders: false, showBody: false).Result);
 
                     logger.LogWarning(builder.ToString());
                     return builtInFactory(context);
