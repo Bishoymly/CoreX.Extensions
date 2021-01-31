@@ -203,10 +203,10 @@ namespace CoreX.Extensions.Logging
         {
             if (message.Remote == null)
             {
-                await WriteLineAsync($"<div style='color:{ToColor(message.LogLevel)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
+                await WriteLineAsync($"<div style='color:{ToColor(message)}'>{message.TimeStamp.ToString(_middleware._options.CurrentValue.TimestampFormat) + ": "}{ToHtml(message.Message)}</div>");
                 if (message.Exception != null)
                 {
-                    await WriteLineAsync($"<div style='color:{ToColor(message.LogLevel)}'>{ToHtml(message.Exception.Message)}</div>");
+                    await WriteLineAsync($"<div style='color:{ToColor(message)}'>{ToHtml(message.Exception.Message)}</div>");
                     await WriteLineAsync($"<div style='color:{ToStackTraceColor(message.LogLevel)}'>{ToHtml(message.Exception.ToString())}</div>");
                 }
             }
@@ -224,9 +224,21 @@ namespace CoreX.Extensions.Logging
             }
         }
 
-        protected string ToColor(LogLevel logLevel)
+        protected string ToColor(LogMessageEntry log)
         {
-            switch (logLevel)
+            // Colorize EF/Http differentely
+            if(log.Message.StartsWith("Executed DbCommand "))
+            {
+                return "aqua";
+            }
+
+            if (log.Message.StartsWith("Sending HTTP request")
+                || log.Message.StartsWith("Received HTTP response"))
+            {
+                return "olive";
+            }
+
+            switch (log.LogLevel)
             {
                 case LogLevel.Trace:
                 case LogLevel.Debug:
