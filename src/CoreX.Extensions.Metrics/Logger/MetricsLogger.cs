@@ -37,7 +37,7 @@ namespace CoreX.Extensions.Metrics
                 }
                 else if(logLevel == LogLevel.Error || logLevel == LogLevel.Warning)
                 {
-                    _metrics.AddException(new MetricsException(formatter(state, exception), _contextAccessor.HttpContext));
+                    _metrics.AddException(new MetricsException(logLevel, formatter(state, exception), _contextAccessor.HttpContext));
                 }
             }
         }
