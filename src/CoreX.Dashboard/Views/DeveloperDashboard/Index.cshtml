@@ -132,7 +132,7 @@
                                         <tr class="in">
                                             <td><div>@ex.Path</div></td>
                                             <td><div>@ex.Type</div></td>
-                                            <td><div>@ex.Message</div></td>
+                                            <td><div>@Html.Raw(ex.Message)</div></td>
                                             <td><div class="code">@Html.Raw(ex.StackTrace)</div></td>
                                         </tr>
                                     }
