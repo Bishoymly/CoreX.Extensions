@@ -1,6 +1,7 @@
 ﻿@model CoreX.Extensions.Metrics.IMetricsService
 @{
     Layout = null;
+    var topRequests = Model.GetTopRequests();
 }
 
 <!DOCTYPE html>
@@ -49,15 +50,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav nav mr-auto" role="tablist" id="mainTab">
-                <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#realtime-page" role="tab" aria-controls="realtime-page" aria-selected="true">Realtime</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#performance-page" role="tab" aria-controls="performance-page" aria-selected="false">Performance</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Failures</a>
-                </li>
             </ul>
             <div class="navbar-nav">
                 <a href="swagger" target="_blank" class="nav-link">
@@ -76,77 +68,74 @@
             </div>
         </div>
     </nav>
-    <div class="tab-content" id="mainTabContent">
-        <div class="tab-pane fade show active" id="realtime-page" role="tabpanel" aria-labelledby="realtime-page">
-            <div class="container-fluid">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="requests-tab" data-toggle="tab" href="#requests-div" role="tab" aria-controls="requests-div" aria-selected="true">Requests <span class="requests-badge badge badge-secondary">@Model.Requests.Count</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="errors-tab" data-toggle="tab" href="#errors-div" role="tab" aria-controls="errors-div" aria-selected="false">Errors <span class="errors-badge badge badge-danger">@Model.Exceptions.Count</span></a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="requests-div" role="tabpanel" aria-labelledby="requests-tab">
-                        <div class="card card-table">
-                            <table class="table anim" id="requests">
-                                <thead>
-                                    <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col">Code</th>
-                                        <th scope="col">Method</th>
-                                        <th scope="col">Path</th>
-                                        <th scope="col" class="number">Duration</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
-                                    {
-                                        <tr class="in" id="@request.Id">
-                                            <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
-                                            <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
-                                            <td><div>@request.Method</div></td>
-                                            <td><div>@request.Path</div></td>
-                                            <td><div class="number">@request.Duration.ToString("#,###,##0") ms</div></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="errors-div" role="tabpanel" aria-labelledby="errors-tab">
-                        <div class="card card-table">
-                            <table class="table anim" id="exceptions">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Path</th>
-                                        <th scope="col">Type</th>
-                                        <th scope="col">Message</th>
-                                        <th scope="col">Stack Trace</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
-                                    {
-                                        <tr class="in">
-                                            <td><div>@ex.Path</div></td>
-                                            <td><div>@ex.Type</div></td>
-                                            <td><div>@ex.Message</div></td>
-                                            <td><div class="code">@Html.Raw(ex.StackTrace)</div></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="performance-page" role="tabpanel" aria-labelledby="performance-page">
-            <div class="container-fluid">
+    <div class="container-fluid">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="requests-tab" data-toggle="tab" href="#requests-div" role="tab" aria-controls="requests-div" aria-selected="true">Requests <span class="requests-badge badge badge-secondary">@Model.Requests.Count</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="errors-tab" data-toggle="tab" href="#errors-div" role="tab" aria-controls="errors-div" aria-selected="false">Errors <span class="errors-badge badge badge-danger">@Model.Exceptions.Count</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="performance-tab" data-toggle="tab" href="#performance-div" role="tab" aria-controls="performance-div" aria-selected="false">Performance @(topRequests.Count>0?"("+((topRequests.Sum(r=>r.DurationTotal)/topRequests.Sum(r=>r.Count)).ToString("#,###,##0")) + " ms)":"")</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="requests-div" role="tabpanel" aria-labelledby="requests-tab">
                 <div class="card card-table">
                     <table class="table anim" id="requests">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Method</th>
+                                <th scope="col">Path</th>
+                                <th scope="col" class="number">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Requests.OrderByDescending(r => r.Date).Take(50))
+                            {
+                                <tr class="in" id="@request.Id">
+                                    <td class="@GetColorClass(request.Status)"><div><i class="fas fa-circle"></i></div></td>
+                                    <td class="@GetColorClass(request.Status)"><div>@request.Status</div></td>
+                                    <td><div>@request.Method</div></td>
+                                    <td><div>@request.Path</div></td>
+                                    <td><div class="number">@request.Duration.ToString("#,###,##0") ms</div></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="errors-div" role="tabpanel" aria-labelledby="errors-tab">
+                <div class="card card-table">
+                    <table class="table anim" id="exceptions">
+                        <thead>
+                            <tr>
+                                <th scope="col">Path</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Stack Trace</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ex in Model.Exceptions.OrderByDescending(r => r.Date).Take(50))
+                            {
+                                <tr class="in">
+                                    <td><div>@ex.Path</div></td>
+                                    <td><div>@ex.Type</div></td>
+                                    <td><div>@Html.Raw(ex.Message)</div></td>
+                                    <td><div class="code">@Html.Raw(ex.StackTrace)</div></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="performance-div" role="tabpanel" aria-labelledby="performance-tab">
+                <div class="card card-table">
+                    <table class="table anim" id="performance">
                         <thead>
                             <tr>
                                 <th scope="col">Method</th>
@@ -156,7 +145,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var request in Model.GetTopRequests())
+                            @foreach (var request in topRequests)
                             {
                                 <tr class="in" id="@request.Id">
                                     <td><div>@request.Method</div></td>

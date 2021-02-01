@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,10 +15,6 @@ namespace CoreX.Extensions.Metrics.Models
         public string StackTrace { get; set; }
         public string Path { get; set; }
         public string RequestId { get; set; }
-
-        public MetricsException()
-        {
-        }
 
         public MetricsException(Exception ex, HttpContext context)
         {
@@ -38,10 +36,10 @@ namespace CoreX.Extensions.Metrics.Models
             }
         }
 
-        public MetricsException(string error, HttpContext context)
+        public MetricsException(LogLevel logLevel, string error, HttpContext context)
         {
             Date = DateTime.Now;
-            Type = "Error";
+            Type = logLevel.ToString();
             Message = ToHtml(error);
             StackTrace = "";
             
