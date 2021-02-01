@@ -37,6 +37,7 @@ namespace CoreX.Extensions.Logging
             {
                 string key = null;
                 string user = null;
+                bool log = true;
                 if (_contextAccessor != null && _contextAccessor.HttpContext != null)
                 {
                     if (_contextAccessor.HttpContext.Request != null)
@@ -50,6 +51,11 @@ namespace CoreX.Extensions.Logging
                         {
                             key = _contextAccessor.HttpContext.Request.Headers["HttpLogger"];
                         }
+
+                        if(_contextAccessor.HttpContext.Request.Path.Value.StartsWith("/devdash") || _contextAccessor.HttpContext.Request.Path.Value == "/log")
+                        {
+                            log = false;
+                        }
                     }
 
                     if (_contextAccessor.HttpContext.User != null && _contextAccessor.HttpContext.User.Identity != null && _contextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -58,7 +64,8 @@ namespace CoreX.Extensions.Logging
                     }
                 }
 
-                _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), user, key));
+                if(log)
+                    _logMiddleware.LogMessage(new LogMessageEntry(DateTime.Now, logLevel, eventId, exception, formatter(state, exception), user, key));
             }
         }
     }
