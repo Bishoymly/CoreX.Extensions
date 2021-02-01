@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Bishoy Labib</Authors>
     <Company>Bishoy Labib</Company>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
     <Description>Extensions that adds a Developer Dashboard that show API metrics and logs</Description>
     <PackageProjectUrl>https://github.com/Bishoymly/CoreX.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Bishoymly/CoreX.Extensions/tree/master/src/CoreX.Dashboard</RepositoryUrl>
