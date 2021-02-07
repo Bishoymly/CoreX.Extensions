@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -13,6 +14,7 @@ namespace CoreX.Extensions.Metrics.Models
         public DateTime Date { get; set; }
         public string Method { get; set; }
         public string Path { get; set; }
+        public string Route { get; set; }
         public string User { get; set; }
         public string Status { get; set; }
         public int Duration { get; set; }
@@ -41,6 +43,22 @@ namespace CoreX.Extensions.Metrics.Models
                         return HttpStatus.Pending;
                 }
             }
+        }
+
+        public string GetRoute(string url)
+        {
+            var path = url.Split('?')[0];
+            var segments = path.Split('/');
+
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (segments[i].Length > 0 && segments[i].All(c => char.IsDigit(c)))
+                {
+                    segments[i] = "{number}";
+                }
+            }
+
+            return string.Join("/", segments);
         }
     }
 }

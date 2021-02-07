@@ -42,6 +42,8 @@ namespace CoreX.Extensions.Metrics
                 Id = context.TraceIdentifier
             };
 
+            request.Route = request.GetRoute(request.Path);
+
             Requests.Add(request);
             RequestStarted?.Invoke(this, new RequestEventArgs { Request = request });
             return request;
@@ -67,12 +69,12 @@ namespace CoreX.Extensions.Metrics
         public List<RequestAggregate> GetTopRequests()
         {
             return Requests.Where(r => r.Status != null)
-                .GroupBy(r => new { r.Method, r.Path })
+                .GroupBy(r => new { r.Method, r.Route })
                 .OrderByDescending(r => r.Sum(s => s.Duration))
                 .Select(r => new RequestAggregate
                 {
                     Method = r.Key.Method,
-                    Path = r.Key.Path,
+                    Route = r.Key.Route,
                     Count = r.Count(),
                     DurationTotal = r.Sum(s=>s.Duration),
                     DurationAvg = (int)r.Average(s => s.Duration),

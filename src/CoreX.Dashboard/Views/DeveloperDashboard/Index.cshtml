@@ -142,17 +142,19 @@
                                 <th scope="col">Path</th>
                                 <th scope="col" class="number">Count</th>
                                 <th scope="col" class="number">Duration(avg)</th>
+                                <th scope="col" class="number">Duration(total)</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var request in topRequests)
                             {
-                                <tr class="in" id="@request.Id">
-                                    <td><div>@request.Method</div></td>
-                                    <td><div>@request.Path</div></td>
-                                    <td><div class="number">@request.Count.ToString("#,###,##0")</div></td>
-                                    <td><div class="number">@request.DurationAvg.ToString("#,###,##0") ms</div></td>
-                                </tr>
+                            <tr class="in" id="@request.Id">
+                                <td><div>@request.Method</div></td>
+                                <td><div>@request.Route</div></td>
+                                <td><div class="number">@request.Count.ToString("#,###,##0")</div></td>
+                                <td><div class="number">@request.DurationAvg.ToString("#,###,##0") ms</div></td>
+                                <td><div class="number">@request.DurationTotal.ToString("#,###,##0") ms</div></td>
+                            </tr>
                             }
                         </tbody>
                     </table>

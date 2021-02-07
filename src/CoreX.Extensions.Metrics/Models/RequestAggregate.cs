@@ -10,12 +10,12 @@ namespace CoreX.Extensions.Metrics.Models
         { 
             get
             {
-                return Method + " " + Path;
+                return Method + " " + Route;
             } 
         }
 
         public string Method { get; set; }
-        public string Path { get; set; }
+        public string Route { get; set; }
         public int Count { get; set; }
         public int DurationTotal { get; set; }
         public int DurationAvg { get; set; }
