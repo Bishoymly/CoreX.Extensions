@@ -6,13 +6,13 @@ This repo contains multiple extensions libraries (nuget packages):
 * [CoreX.Extensions.Metrics](/src/CoreX.Extensions.Metrics) Extensions to track stats for API response time and availability
 * [CoreX.Microservices.Template](/src/MicroserviceTemplate) A project template for creating an awsome microservice with aspnet core
 
-![image.png](../../images/Requests.PNG)
+![image.png](images/Requests.PNG)
 
-![image.png](../../images/Errors.PNG)
+![image.png](images/Errors.PNG)
 
-![image.png](../../images/Performance.PNG)
+![image.png](images/Performance.PNG)
 
-![image.png](../../images/Log.PNG)
+![image.png](images/Log.PNG)
 
 ## Getting started with a new project
 The fastest way is to install the Microservice project template using dotnet new command:
