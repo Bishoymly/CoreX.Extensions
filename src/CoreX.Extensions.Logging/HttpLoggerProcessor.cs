@@ -272,7 +272,7 @@ namespace CoreX.Extensions.Logging
 
         protected string ToHtml(string body)
         {
-            return body.Replace(Environment.NewLine, "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;");
+            return body?.Replace(Environment.NewLine, "<br>").Replace("  ", "&nbsp;&nbsp;").Replace("\t", "&nbsp;&nbsp;");
         }
 
         public void ProcessLogQueue()
